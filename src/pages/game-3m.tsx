@@ -8,6 +8,7 @@ const Game3m = () => {
 			<ProtectedRoute>
 				<div>
 					<h1>Game 3m</h1>
+					<p>Developer is Sleeping now! Please come back later. Thank you!</p>
 				</div>
 			</ProtectedRoute>
 		</AdminLayout>
