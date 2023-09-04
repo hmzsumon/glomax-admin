@@ -157,15 +157,15 @@ export default function SidebarNav() {
 				Withdraw
 			</SidebarNavItem>
 
-			<SidebarNavTitle>Theme</SidebarNavTitle>
-			<SidebarNavItem icon={faDroplet} href='#'>
-				Colors
+			<SidebarNavTitle>Win Games</SidebarNavTitle>
+			<SidebarNavItem icon={faDroplet} href='/game-1m'>
+				Win Game 1m
 			</SidebarNavItem>
-			<SidebarNavItem icon={faDroplet} href='/redux'>
-				Redux
+			<SidebarNavItem icon={faDroplet} href='/game-3m'>
+				Win Game 3m
 			</SidebarNavItem>
-			<SidebarNavItem icon={faDroplet} href='/redux-rtk'>
-				Redux Toolkit (RTK)
+			<SidebarNavItem icon={faDroplet} href='/game-5m'>
+				Win Game 5m
 			</SidebarNavItem>
 			<SidebarNavItem icon={faPencil} href='#'>
 				Typography

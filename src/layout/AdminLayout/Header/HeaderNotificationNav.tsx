@@ -88,7 +88,7 @@ export default function HeaderNotificationNav() {
 		const socket = socketIOClient(ioBaseUrl);
 
 		socket.on('notification', (data) => {
-			console.log('data', data);
+			// console.log('data', data);
 			setAllNotifications([...allNotifications, data]);
 			setNotificationCount(notificationCount + 1);
 			play();
