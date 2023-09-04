@@ -154,7 +154,7 @@ const Game5m = () => {
 	}, [isSuccess, isError]);
 
 	useEffect(() => {
-		const socket = socketIOClient(ioBaseUrl);
+		const socket = socketIOClient(ioBaseUrl, { transports: ['websocket'] });
 
 		socket.on('game-5m', (data) => {
 			// console.log('data', data);
