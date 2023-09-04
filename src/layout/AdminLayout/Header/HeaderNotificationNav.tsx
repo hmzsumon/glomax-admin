@@ -85,7 +85,9 @@ export default function HeaderNotificationNav() {
 	}, [isSuccess, notifications]);
 
 	useEffect(() => {
-		const socket = socketIOClient(ioBaseUrl);
+		const socket = socketIOClient(ioBaseUrl, {
+			transports: ['websocket', 'polling'],
+		});
 
 		socket.on('notification', (data) => {
 			// console.log('data', data);
