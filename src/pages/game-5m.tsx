@@ -156,7 +156,7 @@ const Game5m = () => {
 	useEffect(() => {
 		const socket = socketIOClient(ioBaseUrl);
 
-		socket.on('game-1m', (data) => {
+		socket.on('game-5m', (data) => {
 			// console.log('data', data);
 			setTime(data?.time);
 			setPeriod(data?.game_id);
