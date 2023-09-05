@@ -175,10 +175,12 @@ const Game5m = () => {
 		});
 
 		socket.on('get-game', (data) => {
-			console.log('data', data);
-			play();
-			setGame(data.game);
-			setParticipants(data.participants);
+			// console.log('data', data);
+			if (data.game.game_type === '5m') {
+				play();
+				setGame(data.game);
+				setParticipants(data.participants);
+			}
 		});
 
 		// Cleanup function to disconnect the socket and remove event listener when the component unmounts
