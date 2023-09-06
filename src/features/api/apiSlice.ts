@@ -3,7 +3,7 @@ import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 const baseUrl =
 	process.env.NODE_ENV === 'development'
 		? 'http://localhost:5000/api/v1'
-		: 'https://glomax-api-981d760540eb.herokuapp.com/api/v1';
+		: 'http://16.171.227.53:5000/api/v1';
 
 // console.log('baseUrl', baseUrl);
 export const apiSlice = createApi({
