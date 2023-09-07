@@ -153,8 +153,8 @@ export default function SidebarNav() {
 			<SidebarNavItem icon={faCode} href='/deposit'>
 				Deposit
 			</SidebarNavItem>
-			<SidebarNavItem icon={faCode} href='/withdraw'>
-				Withdraw
+			<SidebarNavItem icon={faCode} href='/withdraws'>
+				Withdraws
 			</SidebarNavItem>
 
 			<SidebarNavTitle>Win Games</SidebarNavTitle>

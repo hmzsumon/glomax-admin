@@ -41,7 +41,7 @@ const Home: NextPage = () => {
 				<div className='row'>
 					<UsersCard users={company?.users} />
 					<DepositCard deposit={company?.deposit} />
-					<WithdrawCard />
+					<WithdrawCard withdraw={company?.withdraw} />
 					<AiRobotCard />
 				</div>
 			</ProtectedRoute>

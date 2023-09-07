@@ -7,20 +7,36 @@ import React from 'react';
 import { Card, Dropdown } from 'react-bootstrap';
 import { Line } from 'react-chartjs-2';
 
-const WithdrawCard = () => {
+const WithdrawCard = ({ withdraw }: any) => {
 	return (
 		<div className='col-sm-6 col-lg-3'>
 			<Card bg='warning' text='white' className='mb-4'>
 				<Card.Body className='pb-0 d-flex justify-content-between align-items-start'>
 					<div>
-						<div className='fs-4 fw-semibold'>
-							2.49%
-							<span className='fs-6 ms-2 fw-normal'>
-								(84.7%
-								<FontAwesomeIcon icon={faArrowUp} fixedWidth />)
-							</span>
+						<div className=''>
+							<p>
+								Pending:{' '}
+								{Number(withdraw?.pending_withdraw_amount).toLocaleString(
+									'en-US',
+									{
+										style: 'currency',
+										currency: 'USD',
+									}
+								)}
+								<sup>{withdraw?.pending_withdraw_count}</sup>
+							</p>
+							<p>
+								Total Withdraw:{' '}
+								{Number(withdraw?.total_withdraw_amount).toLocaleString(
+									'en-US',
+									{
+										style: 'currency',
+										currency: 'USD',
+									}
+								)}
+								<sup>{withdraw?.total_withdraw_count}</sup>
+							</p>
 						</div>
-						<div>Conversion Rate</div>
 					</div>
 					<Dropdown align='end'>
 						<Dropdown.Toggle
