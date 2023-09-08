@@ -110,7 +110,7 @@ const Users = () => {
 	return (
 		<AdminLayout>
 			<ProtectedRoute>
-				<div style={{ height: 300, width: '100%' }}>
+				<div style={{ height: '100%', width: '100%' }}>
 					<Card className='my-2 d-flex align-items-center '>
 						<Card.Body className='gap-2 d-flex '>
 							<Card.Text className='text-success h5'> Total Users :</Card.Text>
