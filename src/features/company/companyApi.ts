@@ -7,7 +7,12 @@ export const companyApi = apiSlice.injectEndpoints({
 			query: () => '/admin/company',
 			providesTags: ['Company'],
 		}),
+
+		// get balance info
+		getBalanceInfo: builder.query<any, void>({
+			query: () => '/admin/company/all-users-balance-info',
+		}),
 	}),
 });
 
-export const { useGetCompanyQuery } = companyApi;
+export const { useGetCompanyQuery, useGetBalanceInfoQuery } = companyApi;

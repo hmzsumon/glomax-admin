@@ -9,7 +9,7 @@ import { Line } from 'react-chartjs-2';
 
 const WithdrawCard = ({ withdraw }: any) => {
 	return (
-		<div className='col-sm-6 col-lg-3'>
+		<div>
 			<Card bg='warning' text='white' className='mb-4'>
 				<Card.Body className='pb-0 d-flex justify-content-between align-items-start'>
 					<div>

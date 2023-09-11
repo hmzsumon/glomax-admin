@@ -9,7 +9,7 @@ import { Bar } from 'react-chartjs-2';
 
 const AiRobotCard = () => {
 	return (
-		<div className='col-sm-6 col-lg-3'>
+		<div>
 			<Card bg='danger' text='white' className='mb-4'>
 				<Card.Body className='pb-0 d-flex justify-content-between align-items-start'>
 					<div>

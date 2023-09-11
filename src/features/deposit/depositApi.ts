@@ -20,7 +20,7 @@ export const depositApi = apiSlice.injectEndpoints({
 				url: `/deposit/approve/${id}`,
 				method: 'PUT',
 			}),
-			invalidatesTags: ['Deposit', 'Deposits'],
+			invalidatesTags: ['Deposit', 'Deposits', 'Company'],
 		}),
 
 		// reject deposit

@@ -6,36 +6,138 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React from 'react';
 import { Card, Dropdown } from 'react-bootstrap';
 import { Line } from 'react-chartjs-2';
+import Withdraw from '../../pages/withdraws/[id]';
+import { useGetBalanceInfoQuery } from '@/features/company/companyApi';
 
-const UsersCard = ({ users }: any) => {
+const UsersCard = ({ company }: any) => {
+	const { data, isError, isLoading, isSuccess, error } =
+		useGetBalanceInfoQuery();
+	const { balanceInfo } = data || {};
+	const {
+		total_ai_active_balance,
+		total_ai_balance,
+		total_main_balance,
+		total_trade_volume,
+	} = balanceInfo || {};
+	const { users } = company || {};
+
+	const totalBalance =
+		total_main_balance + total_ai_balance + total_ai_active_balance;
+
+	const activeBalance =
+		total_main_balance +
+		total_ai_active_balance +
+		total_ai_balance -
+		total_trade_volume;
+	const cost = company?.withdraw?.total_withdraw_amount + totalBalance;
+	const netProfit = company?.deposit?.total_deposit_amount - cost;
 	return (
-		<div className='col-sm-6 col-lg-3'>
+		<div className=''>
 			<Card bg='primary' text='white' className='mb-4'>
-				<Card.Body className='pb-0 d-flex justify-content-between align-items-start'>
-					<div>
-						<div className=''>
-							<p>New Users: {users?.new_users}</p>
-							<p>Active Users: {users?.total_active_users}</p>
+				{isLoading ? (
+					<h4 className=' text-center'>Loading...</h4>
+				) : (
+					<Card.Body className='pb-0 d-flex justify-content-between align-items-start'>
+						<div>
+							<div>
+								<h5>User Info</h5>
+								<div className='d-flex gap-3'>
+									<p>Total Users: {users?.total_users}</p>
+									<p>New Users: {users?.new_users}</p>
+									<p>Active Users: {users?.total_active_users}</p>
+								</div>
+							</div>
+							<div>
+								<h5>User Balance Info</h5>
+								<div className='d-flex gap-3'>
+									<p>
+										Main Balance:{' '}
+										{Number(total_main_balance).toLocaleString('en-US', {
+											style: 'currency',
+											currency: 'USD',
+										})}
+									</p>
+									<p>
+										Active Balance:
+										{Number(activeBalance).toLocaleString('en-US', {
+											style: 'currency',
+											currency: 'USD',
+										})}
+									</p>
+									<p>
+										Ai Balance:{' '}
+										{Number(total_ai_balance).toLocaleString('en-US', {
+											style: 'currency',
+											currency: 'USD',
+										})}
+									</p>
+									<p>
+										Ai Active Balance:{' '}
+										{Number(total_ai_active_balance).toLocaleString('en-US', {
+											style: 'currency',
+											currency: 'USD',
+										})}
+									</p>
+								</div>
+							</div>
+							<div>
+								<h5>Deposit & Withdraw info</h5>
+								<div className='d-flex gap-3'>
+									<p>
+										Total Deposit:{' '}
+										{Number(
+											company?.deposit?.total_deposit_amount
+										).toLocaleString('en-US', {
+											style: 'currency',
+											currency: 'USD',
+										})}
+									</p>
+									<p>
+										Total Withdraw:
+										{Number(
+											company?.withdraw?.total_withdraw_amount
+										).toLocaleString('en-US', {
+											style: 'currency',
+											currency: 'USD',
+										})}
+									</p>
+									<p>
+										Total Balance:{' '}
+										{Number(totalBalance).toLocaleString('en-US', {
+											style: 'currency',
+											currency: 'USD',
+										})}
+									</p>
+									<p>
+										Net Profit:{' '}
+										{Number(netProfit).toLocaleString('en-US', {
+											style: 'currency',
+											currency: 'USD',
+										})}
+									</p>
+								</div>
+							</div>
 						</div>
-					</div>
-					<Dropdown align='end'>
-						<Dropdown.Toggle
-							as='button'
-							bsPrefix='btn'
-							className='p-0 text-white shadow-none btn-link rounded-0'
-							id='dropdown-chart1'
-						>
-							<FontAwesomeIcon fixedWidth icon={faEllipsisVertical} />
-						</Dropdown.Toggle>
+						<Dropdown align='end'>
+							<Dropdown.Toggle
+								as='button'
+								bsPrefix='btn'
+								className='p-0 text-white shadow-none btn-link rounded-0'
+								id='dropdown-chart1'
+							>
+								<FontAwesomeIcon fixedWidth icon={faEllipsisVertical} />
+							</Dropdown.Toggle>
 
-						<Dropdown.Menu>
-							<Dropdown.Item href='/users'>Action</Dropdown.Item>
-							<Dropdown.Item href='#/action-2'>Another action</Dropdown.Item>
-							<Dropdown.Item href='#/action-3'>Something else</Dropdown.Item>
-						</Dropdown.Menu>
-					</Dropdown>
-				</Card.Body>
-				<div className='mx-3 mt-3' style={{ height: '70px' }}>
+							<Dropdown.Menu>
+								<Dropdown.Item href='/users'>Action</Dropdown.Item>
+								<Dropdown.Item href='#/action-2'>Another action</Dropdown.Item>
+								<Dropdown.Item href='#/action-3'>Something else</Dropdown.Item>
+							</Dropdown.Menu>
+						</Dropdown>
+					</Card.Body>
+				)}
+
+				{/* <div className='mx-3 mt-3' style={{ height: '70px' }}>
 					<Line
 						options={{
 							plugins: {
@@ -97,7 +199,7 @@ const UsersCard = ({ users }: any) => {
 							],
 						}}
 					/>
-				</div>
+				</div> */}
 			</Card>
 		</div>
 	);

@@ -21,6 +21,7 @@ import WithdrawCard from '@components/Dashboard/WithdrawCard';
 import AiRobotCard from '@components/Dashboard/AiRobotCard';
 import ProtectedRoute from '@lib/ProtectedRoute';
 import { useGetCompanyQuery } from '@/features/company/companyApi';
+import { Container, Row } from 'react-bootstrap';
 
 Chart.register(
 	CategoryScale,
@@ -38,12 +39,20 @@ const Home: NextPage = () => {
 	return (
 		<AdminLayout>
 			<ProtectedRoute>
-				<div className='row'>
-					<UsersCard users={company?.users} />
-					<DepositCard deposit={company?.deposit} />
-					<WithdrawCard withdraw={company?.withdraw} />
-					<AiRobotCard />
-				</div>
+				<Container>
+					<Row>
+						<UsersCard company={company} />
+					</Row>
+					<Row>
+						<DepositCard deposit={company?.deposit} />
+					</Row>
+					<Row>
+						<WithdrawCard withdraw={company?.withdraw} />
+					</Row>
+					<Row>
+						<AiRobotCard />
+					</Row>
+				</Container>
 			</ProtectedRoute>
 		</AdminLayout>
 	);
