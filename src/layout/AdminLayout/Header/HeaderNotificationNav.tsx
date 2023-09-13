@@ -47,7 +47,7 @@ const ItemWithIcon = (props: ItemWithIconProps) => {
 };
 
 export default function HeaderNotificationNav() {
-	const { data, isSuccess } = useGetNotificationsQuery(undefined, {
+	const { data, isSuccess, refetch } = useGetNotificationsQuery(undefined, {
 		refetchOnMountOrArgChange: true,
 	});
 
@@ -91,9 +91,10 @@ export default function HeaderNotificationNav() {
 
 		socket.on('notification', (data) => {
 			// console.log('data', data);
+			play();
 			setAllNotifications([...allNotifications, data]);
 			setNotificationCount(notificationCount + 1);
-			play();
+			refetch();
 		});
 
 		// Cleanup function to disconnect the socket and remove event listener when the component unmounts
