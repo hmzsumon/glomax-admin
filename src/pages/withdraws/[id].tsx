@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { NextPage } from 'next';
 import { toast } from 'react-toastify';
 import { fetchBaseQueryError } from '@services/helpers';
+import { formatDate, formDateWithTime } from '@/lib/functions';
 import {
 	useApproveDepositMutation,
 	useGetDepositByIdQuery,
@@ -190,6 +191,19 @@ const Withdraw = () => {
 									</ListGroup.Item>
 								</>
 							)}
+
+							<ListGroup.Item>
+								<span>Date Time</span>
+								<span className='float-end '>
+									{new Date(withdraw?.createdAt).toLocaleDateString('en-US', {
+										year: 'numeric',
+										month: 'short',
+										day: 'numeric',
+										hour: 'numeric',
+										minute: 'numeric',
+									})}
+								</span>
+							</ListGroup.Item>
 
 							{method?.name === 'binance' && (
 								<>

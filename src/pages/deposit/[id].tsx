@@ -110,7 +110,7 @@ const Deposit = () => {
 			<ProtectedRoute>
 				<Card>
 					<Card.Body>
-						<Card.Title className=' text-center'>
+						<Card.Title className='text-center '>
 							<span
 								className={`text-capitalize ${
 									status === 'pending' && 'text-warning'
@@ -148,8 +148,20 @@ const Deposit = () => {
 									})}
 								</span>
 							</ListGroup.Item>
+							<ListGroup.Item>
+								<span>Date Time</span>
+								<span className='float-end '>
+									{new Date(createdAt).toLocaleDateString('en-US', {
+										year: 'numeric',
+										month: 'short',
+										day: 'numeric',
+										hour: 'numeric',
+										minute: 'numeric',
+									})}
+								</span>
+							</ListGroup.Item>
 							{status === 'pending' && (
-								<div className='mt-2 d-grid gap-2'>
+								<div className='gap-2 mt-2 d-grid'>
 									<Button variant='success' onClick={handleShow}>
 										<span>Approve</span>
 									</Button>{' '}
@@ -169,7 +181,7 @@ const Deposit = () => {
 							</Modal.Title>
 						</Modal.Header>
 						<Modal.Body>
-							<p className=' text-warning '>
+							<p className=' text-warning'>
 								Are you sure you want to approve this deposit?
 							</p>
 						</Modal.Body>
@@ -192,7 +204,7 @@ const Deposit = () => {
 							</Modal.Title>
 						</Modal.Header>
 						<Modal.Body>
-							<p className=' text-warning '>
+							<p className=' text-warning'>
 								Are you sure you want to reject this deposit?
 							</p>
 							<div>
