@@ -8,8 +8,12 @@ import ioBaseUrl from '@/config/ioBaseUrl';
 import { Button, Card, Col, Row } from 'react-bootstrap';
 import useSound from 'use-sound';
 import { useCreateWinnerMutation } from '@/features/adminWinner/adminWinnerApi';
+import { useThreeMActiveGameQuery } from '@/features/winGame/winGameApi';
 
 const Game3m = () => {
+	const { data, isLoading: g_isLoading, refetch } = useThreeMActiveGameQuery();
+	const { game: gameData } = data || {};
+	console.log('gameData', gameData);
 	const [createWinner, { isError, isLoading, isSuccess, error }] =
 		useCreateWinnerMutation();
 	const [play, { stop }] = useSound('/assets/sounds/user-bet.wav', {
@@ -18,7 +22,7 @@ const Game3m = () => {
 
 	const [time, setTime] = useState(0);
 	const [period, setPeriod] = useState(0);
-	const [game, setGame] = useState(null as any);
+	const [game, setGame] = useState(gameData);
 	const [participants, setParticipants] = useState([] as any);
 	const [btn, setBtn] = useState({} as any);
 	const [disabled, setDisabled] = useState(false);
@@ -162,7 +166,7 @@ const Game3m = () => {
 			setTime(data?.time);
 			setPeriod(data?.game_id);
 			if (data?.time === 0) {
-				setGame(null);
+				refetch();
 				setWinner({
 					number: '',
 					bet_ids: [],
@@ -195,23 +199,23 @@ const Game3m = () => {
 				<div>
 					<h1>Game 3m</h1>
 					<div>
-						<div className=' '>
+						<div className=''>
 							<Card>
-								<Card.Body className=' d-flex gap-2'>
-									<div className=' d-flex gap-2'>
+								<Card.Body className='gap-2 d-flex'>
+									<div className='gap-2 d-flex'>
 										<Card.Title>Period No</Card.Title>
 										<Card.Text>{period}</Card.Text>
 									</div>
-									<div className=' d-flex gap-2'>
+									<div className='gap-2 d-flex'>
 										<span>Time</span>
 										<span>{formatTime(time)}</span>
 									</div>
 								</Card.Body>
 							</Card>
 							{game !== null && (
-								<Card className=' mt-2'>
-									<Card.Body className=' d-flex gap-2'>
-										<div className=' d-flex gap-2'>
+								<Card className='mt-2 '>
+									<Card.Body className='gap-2 d-flex'>
+										<div className='gap-2 d-flex'>
 											<Card.Title>Total Trade</Card.Title>
 											<Card.Text>
 												{Number(game?.total_trade_amount).toLocaleString(
@@ -223,7 +227,7 @@ const Game3m = () => {
 												)}
 											</Card.Text>
 										</div>
-										<div className=' d-flex gap-2'>
+										<div className='gap-2 d-flex'>
 											<Card.Title>Profit</Card.Title>
 											<Card.Text>
 												{Number(profit).toLocaleString('en-US', {
@@ -239,7 +243,7 @@ const Game3m = () => {
 
 						{game !== null && (
 							<>
-								<Row className=' mt-2  '>
+								<Row className='mt-2 '>
 									{/* start Green Btn */}
 									<Col>
 										<Button
@@ -257,7 +261,7 @@ const Game3m = () => {
 												}
 											)}
 										</Button>
-										<Row className=' mt-2'>
+										<Row className='mt-2 '>
 											<Col>
 												<Button
 													variant='success'
@@ -293,7 +297,7 @@ const Game3m = () => {
 												</Button>
 											</Col>
 										</Row>
-										<Row className=' mt-2'>
+										<Row className='mt-2 '>
 											<Col>
 												<Button
 													variant='success'
@@ -350,7 +354,7 @@ const Game3m = () => {
 												}
 											)}
 										</Button>
-										<Row className=' mt-2'>
+										<Row className='mt-2 '>
 											{/* Btn - 2 */}
 											<Col>
 												<Button
@@ -388,7 +392,7 @@ const Game3m = () => {
 												</Button>
 											</Col>
 										</Row>
-										<Row className=' mt-2'>
+										<Row className='mt-2 '>
 											{/* Btn - 6 */}
 											<Col>
 												<Button
@@ -449,7 +453,7 @@ const Game3m = () => {
 											)}
 										</Button>
 
-										<Row className=' mt-2'>
+										<Row className='mt-2 '>
 											{/* Btn - 0 */}
 											<Col>
 												<Button
@@ -496,8 +500,8 @@ const Game3m = () => {
 									</Col>
 									{/* End Violet Btn */}
 								</Row>
-								<Row className=' mt-2  '></Row>
-								<Row className=' mt-2  '></Row>
+								<Row className='mt-2 '></Row>
+								<Row className='mt-2 '></Row>
 							</>
 						)}
 
@@ -532,7 +536,7 @@ const Game3m = () => {
 									))}
 								</h6>
 							</div>
-							<div className=' mt-1'>
+							<div className='mt-1 '>
 								<Button
 									variant='warning'
 									disabled={disabled}
