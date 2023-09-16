@@ -21,6 +21,9 @@ const Participants = ({ id }: { id: any }) => {
 			if (data.game.game_type === '5m') {
 				refetch();
 			}
+			if (data.game.game_type === '3m') {
+				refetch();
+			}
 		});
 
 		// Cleanup function to disconnect the socket and remove event listener when the component unmounts
