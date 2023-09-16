@@ -31,6 +31,7 @@ const TimerThree = (gameType: any) => {
 
 		// Cleanup function to disconnect the socket and remove event listener when the component unmounts
 		return () => {
+			socket.off('game-3m');
 			socket.disconnect();
 			// Remove the 'result-pop' event listener
 		};

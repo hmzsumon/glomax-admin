@@ -11,15 +11,18 @@ import { useCreateWinnerMutation } from '@/features/adminWinner/adminWinnerApi';
 import {
 	useFiveMActiveGameQuery,
 	useGetWinGameResultQuery,
+	useThreeMActiveGameQuery,
 } from '@/features/winGame/winGameApi';
 import TimerThree from '@/components/WineGame/TimerThree';
 import TimerFive from '@/components/WineGame/TimerFive';
 import Participants from '@/components/WineGame/Participants';
 import Results from '@/components/WineGame/Results';
+import { set } from 'nprogress';
 
 const Game3m = () => {
-	const { data, isLoading: g_isLoading, refetch } = useFiveMActiveGameQuery();
+	const { data, isLoading: g_isLoading, refetch } = useThreeMActiveGameQuery();
 	const { game: gameData } = data || {};
+	// console.log('gameData', gameData?._id);
 	const [createWinner, { isError, isLoading, isSuccess, error }] =
 		useCreateWinnerMutation();
 
@@ -28,6 +31,12 @@ const Game3m = () => {
 	});
 
 	const [game, setGame] = useState(gameData);
+	// console.log('game', game?._id);
+
+	// setGame
+	useEffect(() => {
+		setGame(gameData);
+	}, [gameData]);
 	const {
 		data: resultData,
 		isLoading: r_isLoading,
@@ -37,10 +46,6 @@ const Game3m = () => {
 	// get first 6 results
 	const lastSixResults = results?.slice(0, 6);
 	// console.log('lastSixResults', lastSixResults);
-
-	useEffect(() => {
-		setGame(gameData);
-	}, [gameData, refetch]);
 
 	const [participants, setParticipants] = useState([] as any);
 	const [btn, setBtn] = useState({} as any);
@@ -60,7 +65,7 @@ const Game3m = () => {
 
 	// handle set result
 	const handleSetResult = (e: any) => {
-		console.log('e', e);
+		// console.log('e', e);
 		setBtn(e);
 		if (e.btn_id === 'green') {
 			const greenArray = [
@@ -146,11 +151,11 @@ const Game3m = () => {
 	const handleConfirmWinner = () => {
 		// send winner to server
 		const data = {
-			game_id: game?._id,
-			period_no: game?.game_id,
-			game_type: game?.game_type,
-			trade_amount: game?.total_trade_amount,
-			trade_charge: game?.total_trade_charge,
+			game_id: gameData?._id,
+			period_no: gameData?.game_id,
+			game_type: gameData?.game_type,
+			trade_amount: gameData?.total_trade_amount,
+			trade_charge: gameData?.total_trade_charge,
 			profit: profit,
 			winner: winner,
 			participants: participants.length,
@@ -175,25 +180,30 @@ const Game3m = () => {
 		});
 
 		socket.on('get-game', (data) => {
-			// console.log('data', data);
-			if (data.game.game_type === '3m') {
+			// console.log('data io', data);
+			if (data?.game?.game_type === '3m') {
 				play();
 				setFetch(true);
-				setGame(data.game);
 				setParticipants(data.participants);
 				refetch();
 			}
 		});
 
-		socket.on('win-result', (data) => {
+		socket.on('win-result', async (data) => {
 			if (data.game_type === '3m') {
-				r_refetch();
+				setDisabled(false);
+				await r_refetch();
+				setTimeout(async () => {
+					await refetch();
+				}, 6000);
 				setDisabled(false);
 			}
 		});
 
 		// Cleanup function to disconnect the socket and remove event listener when the component unmounts
 		return () => {
+			socket.off('get-game'); // Remove the 'get-game' event listener
+			socket.off('win-result'); // Remove the 'win-result' event listener
 			socket.disconnect();
 			// Remove the 'result-pop' event listener
 		};

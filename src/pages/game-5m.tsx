@@ -40,7 +40,7 @@ const Game5m = () => {
 
 	useEffect(() => {
 		setGame(gameData);
-	}, [gameData, refetch]);
+	}, [gameData]);
 
 	const [participants, setParticipants] = useState([] as any);
 	const [btn, setBtn] = useState({} as any);
@@ -60,7 +60,6 @@ const Game5m = () => {
 
 	// handle set result
 	const handleSetResult = (e: any) => {
-		console.log('e', e);
 		setBtn(e);
 		if (e.btn_id === 'green') {
 			const greenArray = [
@@ -146,11 +145,11 @@ const Game5m = () => {
 	const handleConfirmWinner = () => {
 		// send winner to server
 		const data = {
-			game_id: game?._id,
-			period_no: game?.game_id,
-			game_type: game?.game_type,
-			trade_amount: game?.total_trade_amount,
-			trade_charge: game?.total_trade_charge,
+			game_id: gameData?._id,
+			period_no: gameData?.game_id,
+			game_type: gameData?.game_type,
+			trade_amount: gameData?.total_trade_amount,
+			trade_charge: gameData?.total_trade_charge,
 			profit: profit,
 			winner: winner,
 			participants: participants.length,
@@ -179,23 +178,28 @@ const Game5m = () => {
 			if (data.game.game_type === '5m') {
 				play();
 				setFetch(true);
-				setGame(data.game);
+				setGame(gameData);
 				setParticipants(data.participants);
 				refetch();
 			}
 		});
 
-		socket.on('win-result', (data) => {
+		socket.on('win-result', async (data) => {
 			if (data.game_type === '5m') {
-				r_refetch();
+				await r_refetch();
+				setTimeout(async () => {
+					await refetch();
+					setGame(gameData);
+				}, 6000);
 				setDisabled(false);
 			}
 		});
 
 		// Cleanup function to disconnect the socket and remove event listener when the component unmounts
 		return () => {
+			socket.off('get-game'); // Remove the 'get-game' event listener
+			socket.off('win-result'); // Remove the 'win-result' event listener
 			socket.disconnect();
-			// Remove the 'result-pop' event listener
 		};
 	}, [play]);
 

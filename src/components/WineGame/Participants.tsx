@@ -33,7 +33,7 @@ const Participants = ({ id }: { id: any }) => {
 		};
 	}, []);
 
-	console.log('participants', participants);
+	// console.log('participants', participants);
 	let content;
 	if (isLoading) {
 		content = <div>Loading...</div>;
