@@ -176,7 +176,7 @@ const Game3m = () => {
 
 		socket.on('get-game', (data) => {
 			// console.log('data', data);
-			if (data.game.game_type === '5m') {
+			if (data.game.game_type === '3m') {
 				play();
 				setFetch(true);
 				setGame(data.game);
@@ -578,7 +578,7 @@ const Game3m = () => {
 					</Row>
 					<Row>
 						<Card className='py-2 my-3'>
-							<h4 className='text-center '>Wine Game 5 Minutes Participants</h4>
+							<h4 className='text-center '>Wine Game 3 Minutes Participants</h4>
 						</Card>
 						{game !== null && <Participants id={game?._id} />}
 					</Row>
