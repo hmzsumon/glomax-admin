@@ -22,7 +22,7 @@ import { set } from 'nprogress';
 const Game3m = () => {
 	const { data, isLoading: g_isLoading, refetch } = useThreeMActiveGameQuery();
 	const { game: gameData } = data || {};
-	// console.log('gameData', gameData?._id);
+	console.log('gameData', gameData?._id);
 	const [createWinner, { isError, isLoading, isSuccess, error }] =
 		useCreateWinnerMutation();
 
@@ -31,12 +31,13 @@ const Game3m = () => {
 	});
 
 	const [game, setGame] = useState(gameData);
-	// console.log('game', game?._id);
+	console.log('game', game?._id);
 
 	// setGame
 	useEffect(() => {
 		setGame(gameData);
 	}, [gameData]);
+
 	const {
 		data: resultData,
 		isLoading: r_isLoading,
