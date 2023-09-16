@@ -156,6 +156,9 @@ export default function SidebarNav() {
 			<SidebarNavItem icon={faCode} href='/withdraws'>
 				Withdraws
 			</SidebarNavItem>
+			<SidebarNavItem icon={faCode} href='/ai-robot'>
+				Ai Robot
+			</SidebarNavItem>
 
 			<SidebarNavTitle>Win Games</SidebarNavTitle>
 			<SidebarNavItem icon={faDroplet} href='/game-1m'>
