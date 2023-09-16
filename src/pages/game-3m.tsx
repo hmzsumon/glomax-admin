@@ -5,31 +5,51 @@ import { toast } from 'react-toastify';
 import { fetchBaseQueryError } from '@services/helpers';
 import socketIOClient from 'socket.io-client';
 import ioBaseUrl from '@/config/ioBaseUrl';
-import { Button, Card, Col, Row } from 'react-bootstrap';
+import { Button, Card, Col, Container, Row } from 'react-bootstrap';
 import useSound from 'use-sound';
 import { useCreateWinnerMutation } from '@/features/adminWinner/adminWinnerApi';
-import { useThreeMActiveGameQuery } from '@/features/winGame/winGameApi';
+import {
+	useFiveMActiveGameQuery,
+	useGetWinGameResultQuery,
+} from '@/features/winGame/winGameApi';
+import TimerThree from '@/components/WineGame/TimerThree';
+import TimerFive from '@/components/WineGame/TimerFive';
+import Participants from '@/components/WineGame/Participants';
+import Results from '@/components/WineGame/Results';
 
 const Game3m = () => {
-	const { data, isLoading: g_isLoading, refetch } = useThreeMActiveGameQuery();
+	const { data, isLoading: g_isLoading, refetch } = useFiveMActiveGameQuery();
 	const { game: gameData } = data || {};
-	console.log('gameData', gameData);
 	const [createWinner, { isError, isLoading, isSuccess, error }] =
 		useCreateWinnerMutation();
+
 	const [play, { stop }] = useSound('/assets/sounds/user-bet.wav', {
 		volume: 3,
 	});
 
-	const [time, setTime] = useState(0);
-	const [period, setPeriod] = useState(0);
 	const [game, setGame] = useState(gameData);
+	const {
+		data: resultData,
+		isLoading: r_isLoading,
+		refetch: r_refetch,
+	} = useGetWinGameResultQuery('3m');
+	const { results } = resultData || [];
+	// get first 6 results
+	const lastSixResults = results?.slice(0, 6);
+	// console.log('lastSixResults', lastSixResults);
+
+	useEffect(() => {
+		setGame(gameData);
+	}, [gameData, refetch]);
+
 	const [participants, setParticipants] = useState([] as any);
 	const [btn, setBtn] = useState({} as any);
 	const [disabled, setDisabled] = useState(false);
 	const [number, setNumber] = useState({} as any);
 	const [btnIds, setBtnIds] = useState([] as any);
 	const [length, setLength] = useState(0);
-	const [profit, setProfit] = useState(0);
+	const [fetch, setFetch] = useState(false);
+	const [profit, setProfit] = useState<number>(0);
 	const [colorCodes, setColorCodes] = useState([] as any);
 	const [winner, setWinner] = useState({
 		number: '',
@@ -37,13 +57,6 @@ const Game3m = () => {
 		length: 0,
 		color_codes: [],
 	} as any);
-	const formatTime = (timeInSeconds: number): string => {
-		const minutes = Math.floor(timeInSeconds / 60);
-		const seconds = timeInSeconds % 60;
-		return `${minutes.toString().padStart(2, '0')}:${seconds
-			.toString()
-			.padStart(2, '0')}`;
-	};
 
 	// handle set result
 	const handleSetResult = (e: any) => {
@@ -134,7 +147,7 @@ const Game3m = () => {
 		// send winner to server
 		const data = {
 			game_id: game?._id,
-			period_no: period,
+			period_no: game?.game_id,
 			game_type: game?.game_type,
 			trade_amount: game?.total_trade_amount,
 			trade_charge: game?.total_trade_charge,
@@ -161,28 +174,21 @@ const Game3m = () => {
 			transports: ['websocket', 'polling'],
 		});
 
-		socket.on('game-3m', (data) => {
+		socket.on('get-game', (data) => {
 			// console.log('data', data);
-			setTime(data?.time);
-			setPeriod(data?.game_id);
-			if (data?.time === 0) {
+			if (data.game.game_type === '5m') {
+				play();
+				setFetch(true);
+				setGame(data.game);
+				setParticipants(data.participants);
 				refetch();
-				setWinner({
-					number: '',
-					bet_ids: [],
-					length: 0,
-					color_codes: [],
-				});
-				setDisabled(false);
 			}
 		});
 
-		socket.on('get-game', (data) => {
-			// console.log('data', data);
-			if (data.game.game_type === '3m') {
-				play();
-				setGame(data.game);
-				setParticipants(data.participants);
+		socket.on('win-result', (data) => {
+			if (data.game_type === '3m') {
+				r_refetch();
+				setDisabled(false);
 			}
 		});
 
@@ -196,361 +202,387 @@ const Game3m = () => {
 	return (
 		<AdminLayout>
 			<ProtectedRoute>
-				<div>
-					<h1>Game 3m</h1>
-					<div>
-						<div className=''>
-							<Card>
-								<Card.Body className='gap-2 d-flex'>
-									<div className='gap-2 d-flex'>
-										<Card.Title>Period No</Card.Title>
-										<Card.Text>{period}</Card.Text>
+				<Container>
+					<Card className='py-2 my-3'>
+						<h3 className='text-center '>Wine Game 3 Minutes</h3>
+					</Card>
+					<Row>
+						{/* Board Section */}
+						<Col>
+							<div>
+								<div>
+									<div className=''>
+										<TimerThree />
+										{game !== null && (
+											<Card className='mt-2 '>
+												<Card.Body className='gap-2 d-flex'>
+													<div className='gap-2 d-flex'>
+														<Card.Title>Total Trade</Card.Title>
+														<Card.Text>
+															{Number(game?.total_trade_amount).toLocaleString(
+																'en-US',
+																{
+																	style: 'currency',
+																	currency: 'USD',
+																}
+															)}
+														</Card.Text>
+													</div>
+													<div className='gap-2 d-flex'>
+														<Card.Title>Profit</Card.Title>
+														<Card.Text>
+															{Number(profit).toLocaleString('en-US', {
+																style: 'currency',
+																currency: 'USD',
+															})}
+														</Card.Text>
+													</div>
+													<div className='gap-2 d-flex'>
+														<Card.Title>Participants</Card.Title>
+														<Card.Text>{game?.participants}</Card.Text>
+													</div>
+												</Card.Body>
+											</Card>
+										)}
 									</div>
-									<div className='gap-2 d-flex'>
-										<span>Time</span>
-										<span>{formatTime(time)}</span>
-									</div>
-								</Card.Body>
-							</Card>
-							{game !== null && (
-								<Card className='mt-2 '>
-									<Card.Body className='gap-2 d-flex'>
-										<div className='gap-2 d-flex'>
-											<Card.Title>Total Trade</Card.Title>
-											<Card.Text>
-												{Number(game?.total_trade_amount).toLocaleString(
-													'en-US',
-													{
-														style: 'currency',
-														currency: 'USD',
-													}
-												)}
-											</Card.Text>
+
+									{g_isLoading ? (
+										<div className=' d-flex justify-content-between align-items-center'>
+											<h2>Waiting for the participant...</h2>
 										</div>
-										<div className='gap-2 d-flex'>
-											<Card.Title>Profit</Card.Title>
-											<Card.Text>
-												{Number(profit).toLocaleString('en-US', {
-													style: 'currency',
-													currency: 'USD',
-												})}
-											</Card.Text>
-										</div>
-									</Card.Body>
-								</Card>
-							)}
-						</div>
+									) : (
+										<>
+											<Row className='mt-2 '>
+												{/* start Green Btn */}
+												<Col>
+													<Button
+														variant='success'
+														style={{
+															width: '100%',
+														}}
+														onClick={() => handleSetResult(game?.buttons[11])}
+													>
+														{Number(
+															game?.buttons[11]?.total_amount
+														).toLocaleString('en-US', {
+															style: 'currency',
+															currency: 'USD',
+														})}
+													</Button>
+													<Row className='gap-2 mt-2 '>
+														<Col>
+															<Button
+																variant='success'
+																className=' d-flex justify-content-between align-items-center'
+																style={{
+																	width: '100%',
+																}}
+															>
+																<span>No: 1</span>
+																{Number(
+																	game?.buttons[1]?.total_amount
+																).toLocaleString('en-US', {
+																	style: 'currency',
+																	currency: 'USD',
+																})}
+															</Button>
+														</Col>
+														<Col>
+															<Button
+																variant='success'
+																className=' d-flex justify-content-between align-items-center'
+																style={{
+																	width: '100%',
+																}}
+															>
+																<span>No: 3</span>
+																{Number(
+																	game?.buttons[3]?.total_amount
+																).toLocaleString('en-US', {
+																	style: 'currency',
+																	currency: 'USD',
+																})}
+															</Button>
+														</Col>
+													</Row>
+													<Row className='gap-2 mt-2 '>
+														<Col>
+															<Button
+																variant='success'
+																className=' d-flex justify-content-between align-items-center'
+																style={{
+																	width: '100%',
+																}}
+															>
+																<span>No: 7</span>
+																{Number(
+																	game?.buttons[7]?.total_amount
+																).toLocaleString('en-US', {
+																	style: 'currency',
+																	currency: 'USD',
+																})}
+															</Button>
+														</Col>
 
-						{game !== null && (
-							<>
-								<Row className='mt-2 '>
-									{/* start Green Btn */}
-									<Col>
-										<Button
-											variant='success'
-											style={{
-												width: '100%',
-											}}
-											onClick={() => handleSetResult(game?.buttons[11])}
-										>
-											{Number(game?.buttons[11]?.total_amount).toLocaleString(
-												'en-US',
-												{
-													style: 'currency',
-													currency: 'USD',
-												}
-											)}
-										</Button>
-										<Row className='mt-2 '>
-											<Col>
-												<Button
-													variant='success'
-													className=' d-flex justify-content-between align-items-center'
-													style={{
-														width: '100%',
-													}}
-												>
-													<span>No: 1</span>
-													{Number(
-														game?.buttons[1]?.total_amount
-													).toLocaleString('en-US', {
-														style: 'currency',
-														currency: 'USD',
-													})}
-												</Button>
-											</Col>
-											<Col>
-												<Button
-													variant='success'
-													className=' d-flex justify-content-between align-items-center'
-													style={{
-														width: '100%',
-													}}
-												>
-													<span>No: 3</span>
-													{Number(
-														game?.buttons[3]?.total_amount
-													).toLocaleString('en-US', {
-														style: 'currency',
-														currency: 'USD',
-													})}
-												</Button>
-											</Col>
-										</Row>
-										<Row className='mt-2 '>
-											<Col>
-												<Button
-													variant='success'
-													className=' d-flex justify-content-between align-items-center'
-													style={{
-														width: '100%',
-													}}
-												>
-													<span>No: 7</span>
-													{Number(
-														game?.buttons[7]?.total_amount
-													).toLocaleString('en-US', {
-														style: 'currency',
-														currency: 'USD',
-													})}
-												</Button>
-											</Col>
+														<Col>
+															<Button
+																variant='success'
+																className=' d-flex justify-content-between align-items-center'
+																style={{
+																	width: '100%',
+																}}
+															>
+																<span>No: 9</span>
+																{Number(
+																	game?.buttons[9]?.total_amount
+																).toLocaleString('en-US', {
+																	style: 'currency',
+																	currency: 'USD',
+																})}
+															</Button>
+														</Col>
+													</Row>
+												</Col>
+												{/* End Green Btn */}
 
-											<Col>
-												<Button
-													variant='success'
-													className=' d-flex justify-content-between align-items-center'
-													style={{
-														width: '100%',
-													}}
-												>
-													<span>No: 9</span>
-													{Number(
-														game?.buttons[9]?.total_amount
-													).toLocaleString('en-US', {
-														style: 'currency',
-														currency: 'USD',
-													})}
-												</Button>
-											</Col>
-										</Row>
-									</Col>
-									{/* End Green Btn */}
+												{/* Start Red Btn */}
+												<Col>
+													<Button
+														variant='danger'
+														onClick={() => handleSetResult(game?.buttons[10])}
+														style={{
+															width: '100%',
+														}}
+													>
+														{Number(
+															game?.buttons[10]?.total_amount
+														).toLocaleString('en-US', {
+															style: 'currency',
+															currency: 'USD',
+														})}
+													</Button>
+													<Row className='gap-2 mt-2 '>
+														{/* Btn - 2 */}
+														<Col>
+															<Button
+																variant='danger'
+																className=' d-flex justify-content-between align-items-center'
+																style={{
+																	width: '100%',
+																}}
+															>
+																<span>No: 2</span>
+																{Number(
+																	game?.buttons[2]?.total_amount
+																).toLocaleString('en-US', {
+																	style: 'currency',
+																	currency: 'USD',
+																})}
+															</Button>
+														</Col>
+														{/* Btn - 4 */}
+														<Col>
+															<Button
+																variant='danger'
+																className=' d-flex justify-content-between align-items-center'
+																style={{
+																	width: '100%',
+																}}
+															>
+																<span>No: 4</span>
+																{Number(
+																	game?.buttons[4]?.total_amount
+																).toLocaleString('en-US', {
+																	style: 'currency',
+																	currency: 'USD',
+																})}
+															</Button>
+														</Col>
+													</Row>
+													<Row className='gap-2 mt-2 '>
+														{/* Btn - 6 */}
+														<Col>
+															<Button
+																variant='danger'
+																className=' d-flex justify-content-between align-items-center'
+																style={{
+																	width: '100%',
+																}}
+															>
+																<span>No: 6</span>
+																{Number(
+																	game?.buttons[6]?.total_amount
+																).toLocaleString('en-US', {
+																	style: 'currency',
+																	currency: 'USD',
+																})}
+															</Button>
+														</Col>
+														{/* Btn - 8 */}
+														<Col>
+															<Button
+																variant='danger'
+																className=' d-flex justify-content-between align-items-center'
+																style={{
+																	width: '100%',
+																}}
+															>
+																<span>No: 8</span>
+																{Number(
+																	game?.buttons[8]?.total_amount
+																).toLocaleString('en-US', {
+																	style: 'currency',
+																	currency: 'USD',
+																})}
+															</Button>
+														</Col>
+													</Row>
+												</Col>
+												{/* End Red Btn */}
 
-									{/* Start Red Btn */}
-									<Col>
-										<Button
-											variant='danger'
-											onClick={() => handleSetResult(game?.buttons[10])}
-											style={{
-												width: '100%',
-											}}
-										>
-											{Number(game?.buttons[10]?.total_amount).toLocaleString(
-												'en-US',
-												{
-													style: 'currency',
-													currency: 'USD',
-												}
-											)}
-										</Button>
-										<Row className='mt-2 '>
-											{/* Btn - 2 */}
-											<Col>
-												<Button
-													variant='danger'
-													className=' d-flex justify-content-between align-items-center'
-													style={{
-														width: '100%',
-													}}
-												>
-													<span>No: 2</span>
-													{Number(
-														game?.buttons[2]?.total_amount
-													).toLocaleString('en-US', {
-														style: 'currency',
-														currency: 'USD',
-													})}
-												</Button>
-											</Col>
-											{/* Btn - 4 */}
-											<Col>
-												<Button
-													variant='danger'
-													className=' d-flex justify-content-between align-items-center'
-													style={{
-														width: '100%',
-													}}
-												>
-													<span>No: 4</span>
-													{Number(
-														game?.buttons[4]?.total_amount
-													).toLocaleString('en-US', {
-														style: 'currency',
-														currency: 'USD',
-													})}
-												</Button>
-											</Col>
-										</Row>
-										<Row className='mt-2 '>
-											{/* Btn - 6 */}
-											<Col>
-												<Button
-													variant='danger'
-													className=' d-flex justify-content-between align-items-center'
-													style={{
-														width: '100%',
-													}}
-												>
-													<span>No: 6</span>
-													{Number(
-														game?.buttons[6]?.total_amount
-													).toLocaleString('en-US', {
-														style: 'currency',
-														currency: 'USD',
-													})}
-												</Button>
-											</Col>
-											{/* Btn - 8 */}
-											<Col>
-												<Button
-													variant='danger'
-													className=' d-flex justify-content-between align-items-center'
-													style={{
-														width: '100%',
-													}}
-												>
-													<span>No: 8</span>
-													{Number(
-														game?.buttons[8]?.total_amount
-													).toLocaleString('en-US', {
-														style: 'currency',
-														currency: 'USD',
-													})}
-												</Button>
-											</Col>
-										</Row>
-									</Col>
-									{/* End Red Btn */}
+												{/* Start Violet Btn */}
+												<Col>
+													<Button
+														variant='violet'
+														className=''
+														style={{
+															backgroundColor: '#8a2be2',
+															color: '#fff',
+															width: '100%',
+														}}
+													>
+														{Number(
+															game?.buttons[12]?.total_amount
+														).toLocaleString('en-US', {
+															style: 'currency',
+															currency: 'USD',
+														})}
+													</Button>
 
-									{/* Start Violet Btn */}
-									<Col>
-										<Button
-											variant='violet'
-											className=''
-											style={{
-												backgroundColor: '#8a2be2',
-												color: '#fff',
-												width: '100%',
-											}}
-										>
-											{Number(game?.buttons[12]?.total_amount).toLocaleString(
-												'en-US',
-												{
-													style: 'currency',
-													currency: 'USD',
-												}
-											)}
-										</Button>
+													<Row className='gap-2 mt-2 '>
+														{/* Btn - 0 */}
+														<Col>
+															<Button
+																variant='success'
+																className=' d-flex justify-content-between align-items-center'
+																onClick={() =>
+																	handleSetResult(game?.buttons[0])
+																}
+																style={{
+																	backgroundImage:
+																		'linear-gradient(160deg, #6739b6 50%, #e54d42 0)',
+																	width: '100%',
+																}}
+															>
+																<span>No: 0</span>
+																{Number(
+																	game?.buttons[0]?.total_amount
+																).toLocaleString('en-US', {
+																	style: 'currency',
+																	currency: 'USD',
+																})}
+															</Button>
+														</Col>
+														{/* Btn - 5 */}
+														<Col>
+															<Button
+																variant='success'
+																className=' d-flex justify-content-between align-items-center'
+																onClick={() =>
+																	handleSetResult(game?.buttons[5])
+																}
+																style={{
+																	backgroundImage:
+																		'linear-gradient(160deg, #6739b6 50%, #39b54a 0)',
+																	width: '100%',
+																}}
+															>
+																<span>No: 5</span>
+																{Number(
+																	game?.buttons[5]?.total_amount
+																).toLocaleString('en-US', {
+																	style: 'currency',
+																	currency: 'USD',
+																})}
+															</Button>
+														</Col>
+													</Row>
+												</Col>
+												{/* End Violet Btn */}
+											</Row>
+											<Row className='mt-2 '></Row>
+											<Row className='mt-2 '></Row>
+										</>
+									)}
 
-										<Row className='mt-2 '>
-											{/* Btn - 0 */}
-											<Col>
-												<Button
-													variant='success'
-													className=' d-flex justify-content-between align-items-center'
-													onClick={() => handleSetResult(game?.buttons[0])}
-													style={{
-														backgroundImage:
-															'linear-gradient(160deg, #6739b6 50%, #e54d42 0)',
-														width: '100%',
-													}}
-												>
-													<span>No: 0</span>
-													{Number(
-														game?.buttons[0]?.total_amount
-													).toLocaleString('en-US', {
-														style: 'currency',
-														currency: 'USD',
-													})}
-												</Button>
-											</Col>
-											{/* Btn - 5 */}
-											<Col>
-												<Button
-													variant='success'
-													className=' d-flex justify-content-between align-items-center'
-													onClick={() => handleSetResult(game?.buttons[5])}
-													style={{
-														backgroundImage:
-															'linear-gradient(160deg, #6739b6 50%, #39b54a 0)',
-														width: '100%',
-													}}
-												>
-													<span>No: 5</span>
-													{Number(
-														game?.buttons[5]?.total_amount
-													).toLocaleString('en-US', {
-														style: 'currency',
-														currency: 'USD',
-													})}
-												</Button>
-											</Col>
-										</Row>
-									</Col>
-									{/* End Violet Btn */}
-								</Row>
-								<Row className='mt-2 '></Row>
-								<Row className='mt-2 '></Row>
-							</>
-						)}
-
-						{game == null && (
-							<>
-								<div className=' d-flex justify-content-between align-items-center'>
-									<h2>Waiting for the participant...</h2>
+									{game == null && (
+										<>
+											<div className=' d-flex justify-content-between align-items-center'>
+												<h2>Waiting for the participant...</h2>
+											</div>
+										</>
+									)}
 								</div>
-							</>
-						)}
-					</div>
-					{/* Show Winner */}
-					{winner.length > 0 && (
-						<div>
-							<div className='mt-5'>
-								<h5>Result</h5>
-								<p>Number: {winner.number}</p>
-								<h6>
-									Colors:
-									{winner.color_codes.map((color: any, i: any) => (
-										<span
-											key={i}
-											className='mx-2'
+							</div>
+						</Col>
+						{/* End Board Section */}
+						<Col>
+							<h3>Create Result</h3>
+							{/* Show Winner */}
+							{winner.length > 0 && (
+								<Row>
+									<Col className='mt-2'>
+										<Row>
+											<Col>
+												<h5>Number: {winner.number}</h5>
+											</Col>
+											<Col>
+												<h5>
+													Colors:
+													{winner.color_codes.map((color: any, i: any) => (
+														<span
+															key={i}
+															className='mx-2'
+															style={{
+																backgroundColor: color,
+																width: '20px',
+																height: '20px',
+																display: 'inline-block',
+																borderRadius: '50%',
+															}}
+														></span>
+													))}
+												</h5>
+											</Col>
+										</Row>
+									</Col>
+									<div className='mt-1 '>
+										<Button
+											variant='warning'
+											disabled={disabled}
+											onClick={() => handleConfirmWinner()}
 											style={{
-												backgroundColor: color,
-												width: '20px',
-												height: '20px',
-												display: 'inline-block',
-												borderRadius: '50%',
+												cursor: disabled ? 'not-allowed' : 'pointer',
+												width: '100%',
 											}}
-										></span>
-									))}
-								</h6>
-							</div>
-							<div className='mt-1 '>
-								<Button
-									variant='warning'
-									disabled={disabled}
-									onClick={() => handleConfirmWinner()}
-									style={{
-										cursor: disabled ? 'not-allowed' : 'pointer',
-									}}
-								>
-									Confirm
-								</Button>
-							</div>
-						</div>
-					)}
-				</div>
+										>
+											Confirm
+										</Button>
+									</div>
+								</Row>
+							)}
+							<Row className='my-2 '>
+								<Results results={lastSixResults} />
+							</Row>
+						</Col>
+					</Row>
+					<Row>
+						<Card className='py-2 my-3'>
+							<h4 className='text-center '>Wine Game 5 Minutes Participants</h4>
+						</Card>
+						{game !== null && <Participants id={game?._id} />}
+					</Row>
+				</Container>
 			</ProtectedRoute>
 		</AdminLayout>
 	);

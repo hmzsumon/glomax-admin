@@ -3,11 +3,15 @@ import { AdminLayout } from '@/layout';
 import ProtectedRoute from '@/lib/ProtectedRoute';
 import { useRouter } from 'next/router';
 import React from 'react';
-import { Accordion } from 'react-bootstrap';
+import { Accordion, Button, Col, Row } from 'react-bootstrap';
 
 import Card from 'react-bootstrap/Card';
 import ListGroup from 'react-bootstrap/ListGroup';
 import { Main } from 'next/document';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faArrowUpRightFromSquare } from '@fortawesome/free-solid-svg-icons';
+import Link from 'next/link';
+import path from 'path';
 
 const UserInfo = () => {
 	const router = useRouter();
@@ -22,6 +26,7 @@ const UserInfo = () => {
 		withdrawDetails,
 		tradeRecord,
 		team,
+		transactions,
 	} = data || {};
 
 	console.log(data);
@@ -70,21 +75,51 @@ const UserInfo = () => {
 							<span>Parent 1</span>
 							<div className='flex-column d-flex float-end'>
 								<span className='float-end'>{user?.parent_1?.name}</span>
-								<span className='float-end'>{user?.parent_1?.customer_id}</span>
+								<span className='float-end'>
+									{user?.parent_1?.customer_id}
+									<Link
+										href={`/users/${user?.parent_1?.customer_id}`}
+										passHref
+										className='text-success ms-2 '
+										style={{ cursor: 'pointer', fontSize: '0.8rem' }}
+									>
+										<FontAwesomeIcon icon={faArrowUpRightFromSquare} />
+									</Link>
+								</span>
 							</div>
 						</ListGroup.Item>
 						<ListGroup.Item>
 							<span>Parent 2</span>
 							<div className='flex-column d-flex float-end'>
 								<span className='float-end'>{user?.parent_2?.name}</span>
-								<span className='float-end'>{user?.parent_2?.customer_id}</span>
+								<span className='float-end'>
+									{user?.parent_2?.customer_id}
+									<Link
+										href={`/users/${user?.parent_2?.customer_id}`}
+										passHref
+										className='text-success ms-2 '
+										style={{ cursor: 'pointer', fontSize: '0.8rem' }}
+									>
+										<FontAwesomeIcon icon={faArrowUpRightFromSquare} />
+									</Link>
+								</span>
 							</div>
 						</ListGroup.Item>
 						<ListGroup.Item>
 							<span>Parent 3</span>
 							<div className='flex-column d-flex float-end'>
 								<span className='float-end'>{user?.parent_3?.name}</span>
-								<span className='float-end'>{user?.parent_3?.customer_id}</span>
+								<span className='float-end'>
+									{user?.parent_3?.customer_id}
+									<Link
+										href={`/users/${user?.parent_3?.customer_id}`}
+										passHref
+										className='text-success ms-2 '
+										style={{ cursor: 'pointer', fontSize: '0.8rem' }}
+									>
+										<FontAwesomeIcon icon={faArrowUpRightFromSquare} />
+									</Link>
+								</span>
 							</div>
 						</ListGroup.Item>
 					</ListGroup>
@@ -353,150 +388,165 @@ const UserInfo = () => {
 						{/* End Convert */}
 
 						{/* Start Trade Record */}
-						<Accordion.Item eventKey='5'>
-							<Accordion.Header>Trade Record</Accordion.Header>
-							<Accordion.Body>
-								<ListGroup.Item>
-									<span>Total Trade</span>
-									<span className='float-end'>
-										{Number(tradeRecord?.total_trade_amount).toLocaleString(
-											'en-US',
-											{
+						{tradeRecord && (
+							<Accordion.Item eventKey='5'>
+								<Accordion.Header>Trade Record</Accordion.Header>
+								<Accordion.Body>
+									<ListGroup.Item>
+										<span>Total Trade</span>
+										<span className='float-end'>
+											{Number(tradeRecord?.total_trade_amount).toLocaleString(
+												'en-US',
+												{
+													style: 'currency',
+													currency: 'USD',
+												}
+											)}
+										</span>
+									</ListGroup.Item>
+									<hr />
+									<ListGroup.Item>
+										<span>Total Profit</span>
+										<span className='float-end'>
+											{Number(tradeRecord?.total_profit).toLocaleString(
+												'en-US',
+												{
+													style: 'currency',
+													currency: 'USD',
+												}
+											)}
+										</span>
+									</ListGroup.Item>
+									<hr />
+									<ListGroup.Item>
+										<span>Total Loss</span>
+										<span className='float-end'>
+											{Number(tradeRecord?.total_loss).toLocaleString('en-US', {
 												style: 'currency',
 												currency: 'USD',
-											}
-										)}
-									</span>
-								</ListGroup.Item>
-								<hr />
-								<ListGroup.Item>
-									<span>Total Profit</span>
-									<span className='float-end'>
-										{Number(tradeRecord?.total_profit).toLocaleString('en-US', {
-											style: 'currency',
-											currency: 'USD',
-										})}
-									</span>
-								</ListGroup.Item>
-								<hr />
-								<ListGroup.Item>
-									<span>Total Loss</span>
-									<span className='float-end'>
-										{Number(tradeRecord?.total_loss).toLocaleString('en-US', {
-											style: 'currency',
-											currency: 'USD',
-										})}
-									</span>
-								</ListGroup.Item>
-								<hr />
-								<ListGroup.Item>
-									<span>Last Trade ID</span>
-									<span className='float-end'>
-										{tradeRecord?.last_trade_id}
-									</span>
-								</ListGroup.Item>
-								<hr />
-								<ListGroup.Item>
-									<span>Last Trade Date</span>
-									<span className='float-end'>
-										{new Date(
-											tradeRecord?.last_trade_date
-										).toLocaleDateString()}
-									</span>
-								</ListGroup.Item>
-								<hr />
-								<ListGroup.Item>
-									<span>Last Trade Type</span>
-									<span className='float-end'>
-										{tradeRecord?.last_trade_type}
-									</span>
-								</ListGroup.Item>
-							</Accordion.Body>
-						</Accordion.Item>
+											})}
+										</span>
+									</ListGroup.Item>
+									<hr />
+									<ListGroup.Item>
+										<span>Last Trade ID</span>
+										<span className='float-end'>
+											{tradeRecord?.last_trade_id}
+										</span>
+									</ListGroup.Item>
+									<hr />
+									<ListGroup.Item>
+										<span>Last Trade Date</span>
+										<span className='float-end'>
+											{new Date(
+												tradeRecord?.last_trade_date
+											).toLocaleDateString()}
+										</span>
+									</ListGroup.Item>
+									<hr />
+									<ListGroup.Item>
+										<span>Last Trade Type</span>
+										<span className='float-end'>
+											{tradeRecord?.last_trade_type}
+										</span>
+									</ListGroup.Item>
+								</Accordion.Body>
+							</Accordion.Item>
+						)}
 						{/* End Trade Record */}
 
 						{/* Start Ai Record */}
-						<Accordion.Item eventKey='6'>
-							<Accordion.Header>Ai Record</Accordion.Header>
-							<Accordion.Body>
-								<ListGroup.Item>
-									<span>Current Investment</span>
-									<span className='float-end'>
-										{Number(aiRobotRecord?.current_investment).toLocaleString(
-											'en-US',
-											{
-												style: 'currency',
-												currency: 'USD',
-											}
-										)}
-									</span>
-								</ListGroup.Item>
-								<hr />
-								<ListGroup.Item>
-									<span>Created At</span>
-									<span className='float-end'>
-										{new Date(aiRobotRecord?.updatedAt).toLocaleDateString(
-											'en-US',
-											{
-												year: 'numeric',
-												month: 'short',
-												day: 'numeric',
-												hour: 'numeric',
-												minute: 'numeric',
-											}
-										)}
-									</span>
-								</ListGroup.Item>
-								<hr />
-								<ListGroup.Item>
-									<span>Total Investment</span>
-									<span className='float-end'>
-										{Number(aiRobotRecord?.total_investment).toLocaleString(
-											'en-US',
-											{
-												style: 'currency',
-												currency: 'USD',
-											}
-										)}
-									</span>
-								</ListGroup.Item>
-								<hr />
-								<ListGroup.Item>
-									<span>Total Profit</span>
-									<span className='float-end'>
-										{Number(aiRobotRecord?.total_profit).toLocaleString(
-											'en-US',
-											{
-												style: 'currency',
-												currency: 'USD',
-											}
-										)}
-									</span>
-								</ListGroup.Item>
-								<hr />
-								<ListGroup.Item>
-									<span>Total Count</span>
-									<span className='float-end'>
-										{aiRobotRecord?.total_robot_count}
-									</span>
-								</ListGroup.Item>
-								<hr />
-								<ListGroup.Item>
-									<span>Active Ai ID</span>
-									<span className='float-end'>
-										{aiRobotRecord?.active_robot_id}
-									</span>
-								</ListGroup.Item>
-								<hr />
+						{aiRobotRecord && (
+							<Accordion.Item eventKey='6'>
+								<Accordion.Header>Ai Record</Accordion.Header>
+								<Accordion.Body>
+									<ListGroup.Item>
+										<span>Current Investment</span>
+										<span className='float-end'>
+											{Number(aiRobotRecord?.current_investment).toLocaleString(
+												'en-US',
+												{
+													style: 'currency',
+													currency: 'USD',
+												}
+											)}
+										</span>
+									</ListGroup.Item>
+									<hr />
+									<ListGroup.Item>
+										<span>Created At</span>
+										<span className='float-end'>
+											{new Date(aiRobotRecord?.updatedAt).toLocaleDateString(
+												'en-US',
+												{
+													year: 'numeric',
+													month: 'short',
+													day: 'numeric',
+													hour: 'numeric',
+													minute: 'numeric',
+												}
+											)}
+										</span>
+									</ListGroup.Item>
+									<hr />
+									<ListGroup.Item>
+										<span>Total Investment</span>
+										<span className='float-end'>
+											{Number(aiRobotRecord?.total_investment).toLocaleString(
+												'en-US',
+												{
+													style: 'currency',
+													currency: 'USD',
+												}
+											)}
+										</span>
+									</ListGroup.Item>
+									<hr />
+									<ListGroup.Item>
+										<span>Total Profit</span>
+										<span className='float-end'>
+											{Number(aiRobotRecord?.total_profit).toLocaleString(
+												'en-US',
+												{
+													style: 'currency',
+													currency: 'USD',
+												}
+											)}
+										</span>
+									</ListGroup.Item>
+									<hr />
+									<ListGroup.Item>
+										<span>Total Count</span>
+										<span className='float-end'>
+											{aiRobotRecord?.total_robot_count}
+										</span>
+									</ListGroup.Item>
+									<hr />
+									<ListGroup.Item>
+										<span>Active Ai ID</span>
+										<span className='float-end'>
+											{aiRobotRecord?.active_robot_id}
+											{/* <Link
+												href={`/users/${user?.parent_3?.customer_id}`}
+												passHref
+												className='text-success ms-2 '
+												style={{ cursor: 'pointer', fontSize: '0.8rem' }}
+											>
+												<FontAwesomeIcon icon={faArrowUpRightFromSquare} />
+											</Link> */}
+										</span>
+									</ListGroup.Item>
+									<hr />
 
-								<ListGroup.Item>
-									<span>Last Ai Type</span>
-									<span className='float-end'>
-										{aiRobotRecord?.last_ai_type}
-									</span>
-								</ListGroup.Item>
-							</Accordion.Body>
-						</Accordion.Item>
+									<ListGroup.Item>
+										<span>Last Ai Type</span>
+										<span className='float-end'>
+											{aiRobotRecord?.last_ai_type}
+										</span>
+									</ListGroup.Item>
+								</Accordion.Body>
+							</Accordion.Item>
+						)}
 						{/* End Ai Record */}
 
 						{/* Start Team info */}
@@ -530,6 +580,85 @@ const UserInfo = () => {
 							</Accordion.Body>
 						</Accordion.Item>
 						{/* End Team info */}
+						{/* Start Transactions */}
+						<Accordion.Item eventKey='8'>
+							<Accordion.Header>Transactions</Accordion.Header>
+							<Accordion.Body>
+								<ListGroup.Item>
+									<Row>
+										<Col>
+											<span>Date</span>
+										</Col>
+										<Col>
+											<span>Type</span>
+										</Col>
+										<Col>
+											<span>Amount</span>
+										</Col>
+										<Col className=''>
+											<span>Purpose</span>
+										</Col>
+									</Row>
+								</ListGroup.Item>
+								<hr />
+								{transactions?.map((transaction: any) => (
+									<ListGroup.Item key={transaction._id}>
+										<Row>
+											<Col>
+												<span>
+													{new Date(transaction?.createdAt).toLocaleDateString(
+														'en-US',
+														{
+															year: 'numeric',
+															month: 'short',
+															day: 'numeric',
+															hour: 'numeric',
+															minute: 'numeric',
+														}
+													)}
+												</span>
+											</Col>
+											<Col>
+												{transaction?.isCashIn && (
+													<span className='text-success'>Cash In</span>
+												)}
+												{transaction?.isCashOut && (
+													<span className='text-danger'>Cash Out</span>
+												)}
+											</Col>
+											<Col>
+												<span>
+													{Number(transaction?.amount).toLocaleString('en-US', {
+														style: 'currency',
+														currency: 'USD',
+													})}
+												</span>
+											</Col>
+											<Col>
+												<span>{transaction?.purpose}</span>
+											</Col>
+										</Row>
+									</ListGroup.Item>
+								))}
+								<ListGroup.Item>
+									<Row className='mt-2 '>
+										<Col>
+											<Link
+												href={{
+													pathname: '/transactions',
+													query: { userId: user?._id },
+												}}
+											>
+												<Button variant='primary' className='w-100'>
+													Load More
+												</Button>
+											</Link>
+										</Col>
+									</Row>
+								</ListGroup.Item>
+							</Accordion.Body>
+						</Accordion.Item>
+						{/* Start Transactions */}
 
 						{/* Login Info */}
 						<Accordion.Item eventKey='9'>

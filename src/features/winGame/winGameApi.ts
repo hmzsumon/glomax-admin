@@ -69,6 +69,15 @@ export const winGameApi = apiSlice.injectEndpoints({
 			}),
 			providesTags: ['User', 'Game-1m', 'Game-3m', 'Game-5m'],
 		}),
+
+		// get participants by game_id
+		getParticipantsByGameId: builder.query<any, string>({
+			query: (id) => ({
+				url: `/get-participants/${id}`,
+				method: 'GET',
+			}),
+			providesTags: ['participants', 'Game-1m', 'Game-3m', 'Game-5m'],
+		}),
 	}),
 });
 
@@ -80,4 +89,5 @@ export const {
 	useWinGameCreateTradeMutation,
 	useGetWinGameResultQuery,
 	useGetLoggedInUserRecordsQuery,
+	useGetParticipantsByGameIdQuery,
 } = winGameApi;

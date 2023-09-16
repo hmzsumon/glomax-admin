@@ -246,6 +246,12 @@ export const authApi = apiSlice.injectEndpoints({
 		getUserDetailsById: builder.query<any, string>({
 			query: (id) => `/admin/user/${id}`,
 		}),
+
+		// gat all transactions for admin
+		getAllTransactions: builder.query<any, void>({
+			query: (id) => `/admin/transactions/${id}`,
+			providesTags: ['Transactions'],
+		}),
 	}),
 });
 
@@ -272,4 +278,5 @@ export const {
 	useAdminLoginMutation,
 	useGetAllUsersQuery,
 	useGetUserDetailsByIdQuery,
+	useGetAllTransactionsQuery,
 } = authApi;
