@@ -37,7 +37,7 @@ export default function Header(props: HeaderProps) {
 				</Button>
 				<Link href='/' className='header-brand d-md-none'>
 					<Image
-						src='/assets/logo/log-black.png'
+						src='/assets/logo/logo1.png'
 						alt='logo'
 						width={65}
 						height={30}
