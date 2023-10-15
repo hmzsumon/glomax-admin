@@ -42,11 +42,12 @@ const Deposit = () => {
 	const [reason, setReason] = useState('Transaction Id not matching');
 	const [show, setShow] = useState(false);
 	const [show2, setShow2] = useState(false);
+	const [is_demo, setIs_demo] = useState(false); // for approve
 	const handleClose = () => setShow(false);
 	const handleClose2 = () => setShow2(false);
 	const handleShow = () => setShow(true);
 	const handleShow2 = () => setShow2(true);
-
+	console.log('demo', is_demo);
 	const [
 		approveDeposit,
 		{
@@ -69,7 +70,11 @@ const Deposit = () => {
 
 	// approve handler
 	const handleApprove = async () => {
-		approveDeposit(_id);
+		const data = {
+			id: _id,
+			is_demo,
+		};
+		approveDeposit(data);
 	};
 
 	useEffect(() => {
@@ -184,6 +189,14 @@ const Deposit = () => {
 							<p className=' text-warning'>
 								Are you sure you want to approve this deposit?
 							</p>
+							{/* Check box */}
+							<Form.Check
+								type='checkbox'
+								id='default-checkbox'
+								label='Demo deposit'
+								checked={is_demo}
+								onChange={(e) => setIs_demo(e.target.checked)}
+							/>
 						</Modal.Body>
 						<Modal.Footer>
 							<Button variant='secondary' onClick={handleClose}>

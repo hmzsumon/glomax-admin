@@ -16,9 +16,10 @@ export const depositApi = apiSlice.injectEndpoints({
 
 		// approve deposit
 		approveDeposit: builder.mutation<any, any>({
-			query: (id) => ({
-				url: `/deposit/approve/${id}`,
+			query: (data) => ({
+				url: `/deposit/approve`,
 				method: 'PUT',
+				body: data,
 			}),
 			invalidatesTags: ['Deposit', 'Deposits', 'Company'],
 		}),
