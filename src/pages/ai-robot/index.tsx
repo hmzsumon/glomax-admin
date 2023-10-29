@@ -212,7 +212,7 @@ const AiRobots: NextPage = () => {
 				status: robot.status,
 				customer_id: robot.customer_id,
 				date: formDateWithTime(robot.createdAt),
-				endDate: formDateWithTime(robot.updatedAt),
+				endDate: formDateWithTime(robot.close_time),
 				is_active: robot.is_active,
 				investment: robot.current_investment,
 				profit: robot.take_profit,
