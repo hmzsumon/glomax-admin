@@ -18,6 +18,7 @@ type Deposit = {
 	status: string;
 	date: string;
 	tnx_id: string;
+	sl_no: number;
 };
 
 const Deposits = () => {
@@ -40,6 +41,16 @@ const Deposits = () => {
 	}, 0);
 
 	const columns: GridColDef<any>[] = [
+		{
+			field: 'sl_no',
+			headerName: 'SL No',
+			width: 80,
+			renderCell: (params: any) => (
+				<div className='flex items-center gap-2 text-xs'>
+					<p>{params.row.sl_no}</p>
+				</div>
+			),
+		},
 		{
 			field: 'date',
 			headerName: 'Created At',
@@ -140,6 +151,7 @@ const Deposits = () => {
 		filteredDeposits.map((deposit: any) => {
 			return rows.unshift({
 				id: deposit._id,
+				sl_no: deposit.sl_no,
 				name: deposit.name,
 				customer_id: deposit.customer_id,
 				amount: deposit.amount,
