@@ -19,6 +19,7 @@ type Deposit = {
 	date: string;
 	tnx_id: string;
 	sl_no: number;
+	is_demo: boolean;
 };
 
 const Deposits = () => {
@@ -32,6 +33,8 @@ const Deposits = () => {
 		if (selectedTab === 'new') return deposit.status === 'pending';
 		if (selectedTab === 'approve') return deposit.status === 'approved';
 		if (selectedTab === 'rejected') return deposit.status === 'rejected';
+		if (selectedTab === 'demo')
+			return deposit.is_demo === true && deposit.status === 'approved';
 		return true;
 	});
 
@@ -85,6 +88,20 @@ const Deposits = () => {
 							currency: 'USD',
 						})}
 					</p>
+				</div>
+			),
+		},
+		{
+			field: 'is_demo',
+			headerName: 'Demo',
+			width: 130,
+			renderCell: (params: any) => (
+				<div className='flex items-center gap-2 text-xs'>
+					{params.row.is_demo ? (
+						<p className='text-success'>Yes</p>
+					) : (
+						<p className='text-danger'>No</p>
+					)}
 				</div>
 			),
 		},
@@ -158,6 +175,7 @@ const Deposits = () => {
 				status: deposit.status,
 				date: formatDate(deposit.createdAt),
 				tnx_id: deposit.transactionId,
+				is_demo: deposit.is_demo,
 			});
 		});
 	return (
@@ -203,6 +221,14 @@ const Deposits = () => {
 						</Tab>
 						<Tab eventKey='rejected' title='Rejected Deposits' className='mb-3'>
 							Rejected Deposits:{' '}
+							{Number(totalAmount).toLocaleString('en-US', {
+								style: 'currency',
+								currency: 'USD',
+							})}
+						</Tab>
+
+						<Tab eventKey='demo' title='Demo Deposits' className='mb-3'>
+							Demo Deposits:{' '}
 							{Number(totalAmount).toLocaleString('en-US', {
 								style: 'currency',
 								currency: 'USD',
