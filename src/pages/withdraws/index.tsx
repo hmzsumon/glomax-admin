@@ -20,6 +20,7 @@ type Withdraw = {
 	status: string;
 	date: string;
 	tnx_id: string;
+	sl_no: number;
 };
 
 const Withdraws = () => {
@@ -42,6 +43,16 @@ const Withdraws = () => {
 	}, 0);
 
 	const columns: GridColDef<any>[] = [
+		{
+			field: 'sl_no',
+			headerName: 'SL No',
+			width: 80,
+			renderCell: (params: any) => (
+				<div className='flex items-center gap-2 text-xs'>
+					<p>{params.row.sl_no}</p>
+				</div>
+			),
+		},
 		{
 			field: 'date',
 			headerName: 'Created At',
@@ -152,6 +163,7 @@ const Withdraws = () => {
 		filteredWithdraws?.map((withdraw: any) => {
 			return rows.unshift({
 				id: withdraw._id,
+				sl_no: withdraw.sl_no,
 				name: withdraw.name,
 				customer_id: withdraw.customer_id,
 				amount: withdraw.amount,
