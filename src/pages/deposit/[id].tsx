@@ -13,6 +13,9 @@ import ProtectedRoute from '@/lib/ProtectedRoute';
 import { useRouter } from 'next/router';
 
 import { Button, Card, Form, ListGroup, Modal } from 'react-bootstrap';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import Link from 'next/link';
+import { faArrowUpRightFromSquare } from '@fortawesome/free-solid-svg-icons';
 
 const Deposit = () => {
 	const router = useRouter();
@@ -134,7 +137,17 @@ const Deposit = () => {
 							</ListGroup.Item>
 							<ListGroup.Item>
 								<span>User Id</span>
-								<span className='float-end'>{customer_id}</span>
+								<span className='float-end'>
+									{customer_id}
+									<Link
+										href={`/users/${customer_id}`}
+										passHref
+										className='text-success ms-2 '
+										style={{ cursor: 'pointer', fontSize: '0.8rem' }}
+									>
+										<FontAwesomeIcon icon={faArrowUpRightFromSquare} />
+									</Link>
+								</span>
 							</ListGroup.Item>
 							<ListGroup.Item>
 								<span>Phone</span>
