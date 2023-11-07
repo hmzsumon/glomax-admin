@@ -27,6 +27,8 @@ const UserInfo = () => {
 		tradeRecord,
 		team,
 		transactions,
+		activeMembers,
+		allTeamMembers,
 	} = data || {};
 
 	console.log(data);
@@ -65,9 +67,7 @@ const UserInfo = () => {
 						<ListGroup.Item>
 							<span>Total Team Member</span>
 							<span className='float-end'>
-								{team?.level_1?.length +
-									team?.level_2?.length +
-									team?.level_3?.length}
+								{allTeamMembers} / {activeMembers}
 							</span>
 						</ListGroup.Item>
 
@@ -113,6 +113,40 @@ const UserInfo = () => {
 									{user?.parent_3?.customer_id}
 									<Link
 										href={`/users/${user?.parent_3?.customer_id}`}
+										passHref
+										className='text-success ms-2 '
+										style={{ cursor: 'pointer', fontSize: '0.8rem' }}
+									>
+										<FontAwesomeIcon icon={faArrowUpRightFromSquare} />
+									</Link>
+								</span>
+							</div>
+						</ListGroup.Item>
+						<ListGroup.Item>
+							<span>Parent 4</span>
+							<div className='flex-column d-flex float-end'>
+								<span className='float-end'>{user?.parent_4?.name}</span>
+								<span className='float-end'>
+									{user?.parent_3?.customer_id}
+									<Link
+										href={`/users/${user?.parent_4?.customer_id}`}
+										passHref
+										className='text-success ms-2 '
+										style={{ cursor: 'pointer', fontSize: '0.8rem' }}
+									>
+										<FontAwesomeIcon icon={faArrowUpRightFromSquare} />
+									</Link>
+								</span>
+							</div>
+						</ListGroup.Item>
+						<ListGroup.Item>
+							<span>Parent 5</span>
+							<div className='flex-column d-flex float-end'>
+								<span className='float-end'>{user?.parent_5?.name}</span>
+								<span className='float-end'>
+									{user?.parent_3?.customer_id}
+									<Link
+										href={`/users/${user?.parent_5?.customer_id}`}
 										passHref
 										className='text-success ms-2 '
 										style={{ cursor: 'pointer', fontSize: '0.8rem' }}

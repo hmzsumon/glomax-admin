@@ -19,8 +19,12 @@ import {
 	useGetWithdrawByIdQuery,
 } from '@/features/withdraw/withdrawApi';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCopy } from '@fortawesome/free-solid-svg-icons';
+import {
+	faArrowUpRightFromSquare,
+	faCopy,
+} from '@fortawesome/free-solid-svg-icons';
 import CopyToClipboard from '@/lib/CopyToClipboard';
+import Link from 'next/link';
 
 const Withdraw = () => {
 	const router = useRouter();
@@ -142,7 +146,17 @@ const Withdraw = () => {
 							</ListGroup.Item>
 							<ListGroup.Item>
 								<span>User Id</span>
-								<span className='float-end'>{customer_id}</span>
+								<span className='float-end'>
+									{customer_id}
+									<Link
+										href={`/users/${customer_id}`}
+										passHref
+										className='text-success ms-2 '
+										style={{ cursor: 'pointer', fontSize: '0.8rem' }}
+									>
+										<FontAwesomeIcon icon={faArrowUpRightFromSquare} />
+									</Link>
+								</span>
 							</ListGroup.Item>
 							<ListGroup.Item>
 								<span>Phone</span>
