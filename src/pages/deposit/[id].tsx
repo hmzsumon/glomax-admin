@@ -154,8 +154,10 @@ const Deposit = () => {
 								<span className='float-end'>{phone}</span>
 							</ListGroup.Item>
 							<ListGroup.Item>
-								<span>Transaction Id</span>
-								<span className='float-end'>{transactionId}</span>
+								<span>Transaction Id:</span>
+								<span className='float-end ' style={{ wordBreak: 'break-all' }}>
+									{transactionId}
+								</span>
 							</ListGroup.Item>
 							<ListGroup.Item>
 								<span>Amount</span>
