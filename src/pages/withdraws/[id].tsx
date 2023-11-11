@@ -17,6 +17,7 @@ import { Button, Card, Form, ListGroup, Modal } from 'react-bootstrap';
 import {
 	useApproveWithdrawMutation,
 	useGetWithdrawByIdQuery,
+	useRejectWithdrawMutation,
 } from '@/features/withdraw/withdrawApi';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
@@ -71,14 +72,14 @@ const Withdraw = () => {
 	] = useApproveWithdrawMutation();
 
 	const [
-		rejectDeposit,
+		rejectWithdraw,
 		{
 			isSuccess: r_isSuccess,
 			isError: r_isError,
 			error: r_error,
 			isLoading: r_isLoading,
 		},
-	] = useRejectDepositMutation();
+	] = useRejectWithdrawMutation();
 
 	// approve handler
 	const handleApprove = async () => {
@@ -107,14 +108,14 @@ const Withdraw = () => {
 			id: _id,
 			reason,
 		};
-		rejectDeposit(data);
+		rejectWithdraw(data);
 	};
 
 	useEffect(() => {
 		if (r_isSuccess) {
 			setShow2(false);
 			toast.success('Deposit rejected successfully');
-			router.push('/deposit');
+			router.push('/withdraws');
 		}
 
 		if (r_isError && r_error) {

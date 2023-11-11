@@ -22,6 +22,16 @@ export const withdrawApi = apiSlice.injectEndpoints({
 				body: data,
 			}),
 		}),
+
+		// reject withdraw
+		rejectWithdraw: builder.mutation<any, any>({
+			query: (data) => ({
+				url: `/withdraw/reject`,
+				method: 'PUT',
+				body: data,
+			}),
+			invalidatesTags: ['Withdraws'],
+		}),
 	}),
 });
 
@@ -29,4 +39,5 @@ export const {
 	useGetWithdrawsQuery,
 	useGetWithdrawByIdQuery,
 	useApproveWithdrawMutation,
+	useRejectWithdrawMutation,
 } = withdrawApi;
