@@ -71,6 +71,38 @@ const AiRobots: NextPage = () => {
 		},
 
 		{
+			field: 'is_claimed',
+			headerName: 'Claimed',
+			width: 100,
+			renderCell: (params: any) => (
+				<div className='flex items-center gap-2 text-xs'>
+					{params.row.status === 'pending' && !params.row.is_claimed && (
+						<p className='text-warning '>
+							<span>Pending</span>
+						</p>
+					)}
+
+					{params.row.status === 'pending' && params.row.is_claimed && (
+						<p className='text-success '>
+							<span>Ready</span>
+						</p>
+					)}
+
+					{params.row.status === 'completed' && !params.row.is_claimed && (
+						<p className='text-danger'>
+							<span>Done</span>
+						</p>
+					)}
+
+					{params.row.status === 'cancelled' && !params.row.is_claimed && (
+						<p className='text-danger'>
+							<span>Cancelled</span>
+						</p>
+					)}
+				</div>
+			),
+		},
+		{
 			field: 'customer_id',
 			headerName: 'Customer ID',
 			width: 100,
@@ -219,6 +251,7 @@ const AiRobots: NextPage = () => {
 				gird: robot.grid_no,
 				percent: robot.profit_percent,
 				cancelCharge: robot.cancel_charge,
+				is_claimed: robot.is_claimed,
 			});
 		});
 
