@@ -252,6 +252,26 @@ export const authApi = apiSlice.injectEndpoints({
 			query: (id) => `/admin/transactions/${id}`,
 			providesTags: ['Transactions'],
 		}),
+
+		// change status
+		changeStatus: builder.mutation<void, any>({
+			query: (data) => ({
+				url: `/change-user-status`,
+				method: 'PUT',
+				body: data,
+			}),
+			invalidatesTags: ['User', 'Users'],
+		}),
+
+		// change block status
+		changeBlockStatus: builder.mutation<void, any>({
+			query: (data) => ({
+				url: `/change-block-status`,
+				method: 'PUT',
+				body: data,
+			}),
+			invalidatesTags: ['User', 'Users'],
+		}),
 	}),
 });
 
@@ -279,4 +299,6 @@ export const {
 	useGetAllUsersQuery,
 	useGetUserDetailsByIdQuery,
 	useGetAllTransactionsQuery,
+	useChangeStatusMutation,
+	useChangeBlockStatusMutation,
 } = authApi;

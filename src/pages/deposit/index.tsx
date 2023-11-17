@@ -5,6 +5,7 @@ import { formatDate } from '@/lib/functions';
 import { faEye } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { AdminLayout } from '@layout';
+import { Box } from '@mui/material';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import Link from 'next/link';
 import React, { useState } from 'react';
@@ -236,7 +237,9 @@ const Deposits = () => {
 						</Tab>
 					</Tabs>
 
-					<DataGrid rows={rows} columns={columns} />
+					<Box sx={{ height: 400, width: '100%' }}>
+						<DataGrid rows={rows} columns={columns} loading={isLoading} />
+					</Box>
 				</div>
 			</ProtectedRoute>
 		</AdminLayout>

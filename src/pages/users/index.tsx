@@ -8,6 +8,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEye } from '@fortawesome/free-solid-svg-icons';
 import Card from 'react-bootstrap/Card';
 import Link from 'next/link';
+import { Box } from '@mui/material';
 
 const Users = () => {
 	const { data, isLoading, isSuccess, isError, error } = useGetAllUsersQuery();
@@ -58,7 +59,7 @@ const Users = () => {
 		{
 			field: 'is_active',
 			headerName: 'Status',
-			width: 150,
+			width: 100,
 			renderCell: (params: any) => {
 				return (
 					<div className='flex items-center'>
@@ -69,6 +70,28 @@ const Users = () => {
 						) : (
 							<p className='text-danger '>
 								<span>Inactive</span>
+							</p>
+						)}
+					</div>
+				);
+			},
+		},
+		{
+			field: 'block',
+			headerName: 'Block',
+			width: 150,
+			renderCell: (params: any) => {
+				return (
+					<div className='flex items-center'>
+						{params.row.block === true && (
+							<p className='text-danger '>
+								<span>Blocked</span>
+							</p>
+						)}
+
+						{params.row.block === false && (
+							<p className='text-success '>
+								<span>Not Blocked</span>
 							</p>
 						)}
 					</div>
@@ -105,6 +128,7 @@ const Users = () => {
 				customer_id: user.customer_id,
 				date: formatDate(user.createdAt),
 				is_active: user.is_active,
+				block: user.is_block,
 			});
 		});
 	return (
@@ -119,8 +143,9 @@ const Users = () => {
 							</Card.Text>
 						</Card.Body>
 					</Card>
-
-					<DataGrid rows={rows} columns={columns} />
+					<Box sx={{ height: 400, width: '100%' }}>
+						<DataGrid rows={rows} columns={columns} loading={isLoading} />
+					</Box>
 				</div>
 			</ProtectedRoute>
 		</AdminLayout>

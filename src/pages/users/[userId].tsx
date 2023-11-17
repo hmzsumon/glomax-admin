@@ -1,10 +1,16 @@
-import { useGetUserDetailsByIdQuery } from '@/features/auth/authApi';
+import { toast } from 'react-toastify';
+import { fetchBaseQueryError } from '@services/helpers';
+import {
+	useChangeBlockStatusMutation,
+	useChangeStatusMutation,
+	useGetUserDetailsByIdQuery,
+} from '@/features/auth/authApi';
 import { AdminLayout } from '@/layout';
 import ProtectedRoute from '@/lib/ProtectedRoute';
 import { useRouter } from 'next/router';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Accordion, Button, Col, Row } from 'react-bootstrap';
-
+import Switch from '@mui/material/Switch';
 import Card from 'react-bootstrap/Card';
 import ListGroup from 'react-bootstrap/ListGroup';
 import { Main } from 'next/document';
@@ -14,10 +20,30 @@ import Link from 'next/link';
 import path from 'path';
 
 const UserInfo = () => {
+	const [
+		changeStatus,
+		{
+			isLoading: a_loading,
+			isSuccess: a_success,
+			isError: a_isError,
+			error: a_error,
+		},
+	] = useChangeStatusMutation();
+
+	const [
+		changeBlockStatus,
+		{
+			isLoading: b_loading,
+			isSuccess: b_success,
+			isError: b_isError,
+			error: b_error,
+		},
+	] = useChangeBlockStatusMutation();
+
 	const router = useRouter();
 	const userId = router.query.userId as string;
 
-	const { data } = useGetUserDetailsByIdQuery(userId);
+	const { data, refetch } = useGetUserDetailsByIdQuery(userId);
 	const {
 		user,
 		aiRobotRecord,
@@ -31,7 +57,48 @@ const UserInfo = () => {
 		allTeamMembers,
 	} = data || {};
 
-	console.log(data);
+	const label = { inputProps: { 'aria-label': 'Switch demo' } };
+	const [active, setActive] = React.useState(user?.is_active);
+	const [block, setBlock] = React.useState(user?.is_block);
+
+	const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+		setActive(event.target.checked);
+		changeStatus({
+			user_id: user?._id,
+			status: event.target.checked,
+		});
+	};
+
+	// handle block status
+	const handleBlockChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+		setBlock(event.target.checked);
+		changeBlockStatus({
+			user_id: user?._id,
+			block: event.target.checked,
+		});
+	};
+
+	// for status
+	useEffect(() => {
+		if (a_isError) {
+			toast.error((a_error as fetchBaseQueryError).data?.message);
+		}
+		if (a_success) {
+			toast.success('Status Changed Successfully');
+			refetch();
+		}
+	}, [a_isError, a_success, a_error]);
+
+	// for block status
+	useEffect(() => {
+		if (b_isError) {
+			toast.error((b_error as fetchBaseQueryError).data?.message);
+		}
+		if (b_success) {
+			toast.success('Block Status Changed Successfully');
+			refetch();
+		}
+	}, [b_isError, b_success, b_error]);
 
 	return (
 		<AdminLayout>
@@ -68,6 +135,44 @@ const UserInfo = () => {
 							<span>Total Team Member</span>
 							<span className='float-end'>
 								{allTeamMembers} / {activeMembers}
+							</span>
+						</ListGroup.Item>
+
+						<ListGroup.Item>
+							<span>Active Status</span>
+							<span className='float-end'>
+								{active ? (
+									<span className='text-success'>Active</span>
+								) : (
+									<span className='text-danger'>Inactive</span>
+								)}
+								<span>
+									<Switch
+										{...label}
+										checked={active}
+										onChange={handleChange}
+										size='small'
+									/>
+								</span>
+							</span>
+						</ListGroup.Item>
+
+						<ListGroup.Item>
+							<span>Block Status</span>
+							<span className='float-end'>
+								{block ? (
+									<span className='text-danger'>Blocked</span>
+								) : (
+									<span className='text-success'>Unblocked</span>
+								)}
+								<span>
+									<Switch
+										size='small'
+										{...label}
+										checked={block}
+										onChange={handleBlockChange}
+									/>
+								</span>
 							</span>
 						</ListGroup.Item>
 
