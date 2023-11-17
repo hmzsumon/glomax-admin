@@ -160,6 +160,10 @@ export default function SidebarNav() {
 				Ai Robot
 			</SidebarNavItem>
 
+			<SidebarNavItem icon={faCode} href='/add-txid'>
+				Add TxId
+			</SidebarNavItem>
+
 			<SidebarNavTitle>Win Games</SidebarNavTitle>
 			<SidebarNavItem icon={faDroplet} href='/game-1m'>
 				Win Game 1m

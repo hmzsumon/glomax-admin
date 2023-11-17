@@ -33,6 +33,22 @@ export const depositApi = apiSlice.injectEndpoints({
 			}),
 			invalidatesTags: ['Deposit', 'Deposits'],
 		}),
+
+		// add txId
+		addTxId: builder.mutation<any, any>({
+			query: (data) => ({
+				url: `/add/tx-id`,
+				method: 'POST',
+				body: data,
+			}),
+			invalidatesTags: ['TxIds'],
+		}),
+
+		// get all txIds
+		getTxIds: builder.query<any, void>({
+			query: () => '/all/tx-id',
+			providesTags: ['TxIds'],
+		}),
 	}),
 });
 
@@ -41,4 +57,6 @@ export const {
 	useGetDepositByIdQuery,
 	useApproveDepositMutation,
 	useRejectDepositMutation,
+	useAddTxIdMutation,
+	useGetTxIdsQuery,
 } = depositApi;
