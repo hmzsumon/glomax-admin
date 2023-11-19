@@ -112,6 +112,22 @@ const Withdraws = () => {
 		},
 
 		{
+			field: 'netAmount',
+			headerName: 'Net Amount',
+			width: 130,
+			renderCell: (params: any) => (
+				<div className='flex items-center gap-2 text-xs text-danger'>
+					<p>
+						{Number(params.row.netAmount).toLocaleString('en-US', {
+							style: 'currency',
+							currency: 'USD',
+						})}
+					</p>
+				</div>
+			),
+		},
+
+		{
 			field: 'status',
 			headerName: 'Status',
 			width: 150,
@@ -167,6 +183,7 @@ const Withdraws = () => {
 				name: withdraw.name,
 				customer_id: withdraw.customer_id,
 				amount: withdraw.amount,
+				netAmount: withdraw.net_amount,
 				status: withdraw.status,
 				method: withdraw.method,
 				date: formatDate(withdraw.createdAt),

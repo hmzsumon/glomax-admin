@@ -57,6 +57,28 @@ const Users = () => {
 		},
 
 		{
+			field: 'rank',
+			headerName: 'Rank',
+			width: 130,
+			renderCell: (params: any) => (
+				<div className='flex items-center gap-2 text-xs'>
+					<p>{params.row.rank}</p>
+				</div>
+			),
+		},
+
+		{
+			field: 'members',
+			headerName: 'Members',
+			width: 130,
+			renderCell: (params: any) => (
+				<div className='flex items-center gap-2 text-xs'>
+					<p>{params.row.members}</p>
+				</div>
+			),
+		},
+
+		{
 			field: 'is_active',
 			headerName: 'Status',
 			width: 100,
@@ -129,6 +151,13 @@ const Users = () => {
 				date: formatDate(user.createdAt),
 				is_active: user.is_active,
 				block: user.is_block,
+				rank: user.rank,
+				members:
+					user.level_1_count +
+					user.level_2_count +
+					user.level_3_count +
+					user.level_4_count +
+					user.level_5_count,
 			});
 		});
 	return (
