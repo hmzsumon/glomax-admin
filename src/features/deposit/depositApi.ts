@@ -49,6 +49,15 @@ export const depositApi = apiSlice.injectEndpoints({
 			query: () => '/all/tx-id',
 			providesTags: ['TxIds'],
 		}),
+
+		// find deposit by sl_no
+		findDepositBySlNo: builder.mutation<any, string>({
+			query: (data) => ({
+				url: `/find/deposits/sl-no`,
+				method: 'PUT',
+				body: data,
+			}),
+		}),
 	}),
 });
 
@@ -59,4 +68,5 @@ export const {
 	useRejectDepositMutation,
 	useAddTxIdMutation,
 	useGetTxIdsQuery,
+	useFindDepositBySlNoMutation,
 } = depositApi;

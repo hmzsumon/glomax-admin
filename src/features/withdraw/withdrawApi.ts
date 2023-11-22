@@ -32,6 +32,15 @@ export const withdrawApi = apiSlice.injectEndpoints({
 			}),
 			invalidatesTags: ['Withdraws'],
 		}),
+
+		// get withdraws by sl_no
+		getWithdrawsBySlNo: builder.mutation<any, string>({
+			query: (data) => ({
+				url: `/withdraws/sl-no`,
+				method: 'PUT',
+				body: data,
+			}),
+		}),
 	}),
 });
 
@@ -40,4 +49,5 @@ export const {
 	useGetWithdrawByIdQuery,
 	useApproveWithdrawMutation,
 	useRejectWithdrawMutation,
+	useGetWithdrawsBySlNoMutation,
 } = withdrawApi;

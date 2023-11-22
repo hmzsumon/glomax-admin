@@ -164,6 +164,10 @@ export default function SidebarNav() {
 				Add TxId
 			</SidebarNavItem>
 
+			<SidebarNavItem icon={faCode} href='/excel'>
+				Excel
+			</SidebarNavItem>
+
 			<SidebarNavTitle>Win Games</SidebarNavTitle>
 			<SidebarNavItem icon={faDroplet} href='/game-1m'>
 				Win Game 1m
