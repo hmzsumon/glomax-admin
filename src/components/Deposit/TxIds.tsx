@@ -4,7 +4,7 @@ import {
 	useGetTxIdsQuery,
 } from '@/features/deposit/depositApi';
 import ProtectedRoute from '@/lib/ProtectedRoute';
-import { formatDate } from '@/lib/functions';
+import { formatDate, formDateWithTimeToLocal } from '@/lib/functions';
 import { faEye } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { AdminLayout } from '@layout';
@@ -30,6 +30,11 @@ const TxIds = () => {
 	const { txIds } = data || [];
 
 	const columns: GridColDef<any>[] = [
+		{
+			field: 'date',
+			headerName: 'Date',
+			width: 200,
+		},
 		{
 			field: 'tx_id',
 			headerName: 'Tx Id',
@@ -66,6 +71,7 @@ const TxIds = () => {
 				id: deposit._id,
 				amount: deposit.amount,
 				tx_id: deposit.tx_id,
+				date: formDateWithTimeToLocal(deposit.createdAt),
 			});
 		});
 	return (

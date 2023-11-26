@@ -59,7 +59,10 @@ const ExcelWithdraw = () => {
 				user_id: withdraw.customer_id,
 				amount: withdraw.amount,
 				' ': ' ',
-				netAmount: withdraw.net_amount,
+				netAmount: Number(withdraw.net_amount).toLocaleString('en-US', {
+					style: 'currency',
+					currency: 'USD',
+				}),
 
 				date: formDateWithTimeToLocal(withdraw.approved_at),
 			});

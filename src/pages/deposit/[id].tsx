@@ -6,6 +6,7 @@ import {
 	useApproveDepositMutation,
 	useGetDepositByIdQuery,
 	useGetDepositsQuery,
+	useReRejectDepositMutation,
 	useRejectDepositMutation,
 } from '@/features/deposit/depositApi';
 import { AdminLayout } from '@/layout';
@@ -71,6 +72,22 @@ const Deposit = () => {
 		},
 	] = useRejectDepositMutation();
 
+	// for re-reject
+	const [
+		reRejectDeposit,
+		{
+			isLoading: re_isLoading,
+			isError: re_isError,
+			isSuccess: re_isSuccess,
+			error: re_error,
+		},
+	] = useReRejectDepositMutation();
+
+	// re reject handler
+	const handleReReject = async () => {
+		reRejectDeposit({ id: _id });
+	};
+
 	// approve handler
 	const handleApprove = async () => {
 		const data = {
@@ -112,6 +129,18 @@ const Deposit = () => {
 			toast.error((r_error as fetchBaseQueryError).data?.message);
 		}
 	}, [r_isSuccess, r_isError]);
+
+	// for re-reject
+	useEffect(() => {
+		if (re_isSuccess) {
+			toast.success('Deposit re-rejected successfully');
+			router.push('/deposit');
+		}
+
+		if (re_isError && re_error) {
+			toast.error((re_error as fetchBaseQueryError).data?.message);
+		}
+	}, [re_isSuccess, re_isError]);
 
 	return (
 		<AdminLayout>
@@ -187,6 +216,14 @@ const Deposit = () => {
 									</Button>{' '}
 									<Button variant='danger' onClick={handleShow2}>
 										<span>Reject</span>
+									</Button>{' '}
+								</div>
+							)}
+
+							{status === 'approved' && (
+								<div className='gap-2 mt-2 d-grid'>
+									<Button variant='danger' onClick={handleReReject}>
+										{re_isLoading ? 'Loading...' : 'Re-Reject'}
 									</Button>{' '}
 								</div>
 							)}

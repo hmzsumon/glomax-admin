@@ -1,4 +1,5 @@
 import { apiSlice } from '../api/apiSlice';
+import { IconDefinition } from '@fortawesome/fontawesome-svg-core';
 
 export const depositApi = apiSlice.injectEndpoints({
 	endpoints: (builder) => ({
@@ -58,6 +59,15 @@ export const depositApi = apiSlice.injectEndpoints({
 				body: data,
 			}),
 		}),
+
+		// re reject deposit
+		reRejectDeposit: builder.mutation<any, any>({
+			query: ({ id }) => ({
+				url: `/deposit/re-reject/${id}`,
+				method: 'PUT',
+			}),
+			invalidatesTags: ['Deposit', 'Deposits'],
+		}),
 	}),
 });
 
@@ -69,4 +79,5 @@ export const {
 	useAddTxIdMutation,
 	useGetTxIdsQuery,
 	useFindDepositBySlNoMutation,
+	useReRejectDepositMutation,
 } = depositApi;
