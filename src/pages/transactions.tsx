@@ -33,6 +33,7 @@ const Transactions = () => {
 										<th scope='col'>Date</th>
 										<th scope='col'>Type</th>
 										<th scope='col'>Amount</th>
+										<th scope='col'>Balance</th>
 										<th scope='col'>Purpose</th>
 										<th scope='col'>Description</th>
 									</tr>
@@ -59,6 +60,16 @@ const Transactions = () => {
 											<td>{transaction?.transactionType}</td>
 											<td>
 												{Number(transaction?.amount).toLocaleString('en-US', {
+													style: 'currency',
+													currency: 'USD',
+													minimumFractionDigits: 2,
+													maximumFractionDigits: 6,
+												})}
+											</td>
+											<td>
+												{Number(
+													transaction?.balance ? transaction?.balance : 0
+												).toLocaleString('en-US', {
 													style: 'currency',
 													currency: 'USD',
 													minimumFractionDigits: 2,

@@ -11,7 +11,7 @@ import { AdminLayout } from '@layout';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import Link from 'next/link';
 import React, { useState } from 'react';
-import { Card, Tab, Tabs } from 'react-bootstrap';
+import { Card, Row, Tab, Tabs } from 'react-bootstrap';
 
 type Deposit = {
 	id: string;
@@ -28,6 +28,7 @@ type Deposit = {
 const TxIds = () => {
 	const { data, isLoading, isSuccess, isError, error } = useGetTxIdsQuery();
 	const { txIds } = data || [];
+	const { totalAmount } = data || { totalAmount: 0 };
 
 	const columns: GridColDef<any>[] = [
 		{
@@ -78,8 +79,20 @@ const TxIds = () => {
 		<div style={{ height: '100%', width: '100%' }}>
 			<Card className='my-2 d-flex align-items-center '>
 				<Card.Body className='gap-2 d-flex '>
-					<Card.Text className='text-success h5'> All Tx Ids :</Card.Text>
-					<Card.Text className=' text-success h5'>{txIds?.length}</Card.Text>
+					<Row className='d-flex align-items-center'>
+						<p className='text-sm'>Total Amount: </p>
+						<p className='text-sm'>
+							{Number(totalAmount).toLocaleString('en-US', {
+								style: 'currency',
+								currency: 'USD',
+							})}
+						</p>
+					</Row>
+
+					<Row className='d-flex align-items-center'>
+						<p className='text-sm'>Total Deposits: </p>
+						<p className='text-sm'>{txIds?.length}</p>
+					</Row>
 				</Card.Body>
 			</Card>
 

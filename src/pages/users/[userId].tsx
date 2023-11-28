@@ -734,6 +734,9 @@ const UserInfo = () => {
 										<Col>
 											<span>Amount</span>
 										</Col>
+										<Col>
+											<span>Balance</span>
+										</Col>
 										<Col className=''>
 											<span>Purpose</span>
 										</Col>
@@ -770,6 +773,18 @@ const UserInfo = () => {
 													{Number(transaction?.amount).toLocaleString('en-US', {
 														style: 'currency',
 														currency: 'USD',
+													})}
+												</span>
+											</Col>
+											<Col>
+												<span>
+													{Number(
+														transaction?.balance ? transaction?.balance : 0
+													).toLocaleString('en-US', {
+														style: 'currency',
+														currency: 'USD',
+														maximumFractionDigits: 2,
+														minimumFractionDigits: 2,
 													})}
 												</span>
 											</Col>
