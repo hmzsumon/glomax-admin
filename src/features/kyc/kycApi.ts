@@ -21,6 +21,15 @@ export const kycApi = apiSlice.injectEndpoints({
 				method: 'PUT',
 			}),
 		}),
+
+		// reject kyc
+		rejectKycById: builder.mutation<any, any>({
+			query: (data) => ({
+				url: `/admin/kyc/reject`,
+				method: 'PUT',
+				body: data,
+			}),
+		}),
 	}),
 });
 
@@ -28,4 +37,5 @@ export const {
 	useGetPendingKycQuery,
 	useGetPendingKycByIdQuery,
 	useApproveKycByIdMutation,
+	useRejectKycByIdMutation,
 } = kycApi;

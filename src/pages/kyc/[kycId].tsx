@@ -7,11 +7,27 @@ import { useRouter } from 'next/router';
 import {
 	useApproveKycByIdMutation,
 	useGetPendingKycByIdQuery,
+	useRejectKycByIdMutation,
 } from '@/features/kyc/kycApi';
-import { Button, Card, Col, ListGroup, Row, Modal } from 'react-bootstrap';
+import {
+	Button,
+	Card,
+	Col,
+	ListGroup,
+	Row,
+	Modal,
+	Form,
+} from 'react-bootstrap';
 import Link from 'next/link';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowUpRightFromSquare } from '@fortawesome/free-solid-svg-icons';
+import Select from 'react-select';
+import Spinner from 'react-bootstrap/Spinner';
+
+interface RejectionReason {
+	value: string;
+	label: string;
+}
 
 const Kyc = () => {
 	const router = useRouter();
@@ -31,17 +47,59 @@ const Kyc = () => {
 		},
 	] = useApproveKycByIdMutation();
 
+	// for reject
+	const [
+		rejectKycById,
+		{
+			isLoading: r_isLoading,
+			isSuccess: r_isSuccess,
+			isError: r_isError,
+			error: r_error,
+		},
+	] = useRejectKycByIdMutation();
+
 	const [show, setShow] = useState(false);
 	const [show2, setShow2] = useState(false);
 	const handleClose = () => setShow(false);
 	const handleClose2 = () => setShow2(false);
 	const handleShow = () => setShow(true);
 	const handleShow2 = () => setShow2(true);
+	// State for rejection reasons
+	const [reasons, setReasons] = useState<RejectionReason[]>([]);
 
 	// re reject handler
 	const handleReReject = async () => {
-		console.log('re reject');
+		console.log('re reject with reasons', reasons);
+		const reasonValues = reasons.map((reason) => reason.label);
+		const data = {
+			id: kycId as string,
+			reasons: reasonValues,
+		};
+
+		rejectKycById(data);
+		console.log(data);
 	};
+
+	useEffect(() => {
+		if (r_isSuccess) {
+			toast.success('KYC rejected successfully');
+			handleClose2();
+			router.push('/kyc');
+		}
+
+		if (r_isError) {
+			if (r_isError && r_error) {
+				toast.error((r_error as fetchBaseQueryError).data?.message);
+			}
+		}
+	}, [r_isSuccess, r_isError, r_error]);
+
+	// Explicitly define the type for options
+	const rejectionReasonsOptions: RejectionReason[] = [
+		{ value: 'document_issue', label: 'Document Not Clear' },
+		{ value: 'information_mismatch', label: 'Information Mismatch' },
+		// Add more rejection reasons as needed
+	];
 
 	// approve handler
 	const handleApprove = async () => {
@@ -116,6 +174,11 @@ const Kyc = () => {
 								<ListGroup.Item>
 									<span>Email</span>
 									<span className='float-end'>{kyc?.email}</span>
+								</ListGroup.Item>
+
+								<ListGroup.Item>
+									<span>Nid No</span>
+									<span className='float-end'>{kyc?.nid_no}</span>
 								</ListGroup.Item>
 
 								<ListGroup.Item>
@@ -231,31 +294,46 @@ const Kyc = () => {
 					<Modal show={show2} onHide={handleClose2} animation={false}>
 						<Modal.Header closeButton>
 							<Modal.Title>
-								<span>Reject Deposit</span>
+								<span>Reject KYC</span>
 							</Modal.Title>
 						</Modal.Header>
-						{/* <Modal.Body>
-							<p className=' text-warning'>
-								Are you sure you want to reject this deposit?
-							</p>
-							<div>
-								<Form.Label htmlFor='basic-url'>
-									<span>Enter reason for rejection</span>
-								</Form.Label>
-								<Form.Control
-									placeholder='Enter reason for rejection'
-									aria-label='Username'
-									aria-describedby='basic-addon1'
-									value={reason}
-									onChange={(e) => setReason(e.target.value)}
-								/>
+						{r_isLoading ? (
+							<div className='d-flex align-items-center justify-content-center'>
+								<Spinner animation='border' role='status'>
+									<span className='visually-hidden'>Loading...</span>
+								</Spinner>
 							</div>
-						</Modal.Body> */}
+						) : (
+							<Modal.Body>
+								<p className=' text-warning'>
+									Are you sure you want to reject this KYC?
+								</p>
+								<div>
+									<Form.Label htmlFor='rejection-reasons'>
+										<span>Select reasons for rejection</span>
+									</Form.Label>
+									{/* Use react-select for a multi-select dropdown */}
+									<Select
+										id='rejection-reasons'
+										isMulti
+										options={rejectionReasonsOptions}
+										value={reasons}
+										onChange={(selectedOptions) =>
+											setReasons(selectedOptions as RejectionReason[])
+										}
+									/>
+								</div>
+							</Modal.Body>
+						)}
 						<Modal.Footer>
 							<Button variant='secondary' onClick={handleClose2}>
 								Close
 							</Button>
-							<Button variant='danger' onClick={handleReReject}>
+							<Button
+								variant='danger'
+								onClick={handleReReject}
+								disabled={reasons.length === 0 || r_isLoading}
+							>
 								Confirm Reject
 							</Button>
 						</Modal.Footer>
