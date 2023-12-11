@@ -45,6 +45,7 @@ export const apiSlice = createApi({
 		'Deposit',
 		'participants',
 		'TxIds',
+		'KYC',
 	],
 	endpoints: (builder) => ({}),
 });

@@ -168,6 +168,10 @@ export default function SidebarNav() {
 				Excel
 			</SidebarNavItem>
 
+			<SidebarNavItem icon={faCode} href='/kyc'>
+				KYC List
+			</SidebarNavItem>
+
 			<SidebarNavTitle>Win Games</SidebarNavTitle>
 			<SidebarNavItem icon={faDroplet} href='/game-1m'>
 				Win Game 1m
