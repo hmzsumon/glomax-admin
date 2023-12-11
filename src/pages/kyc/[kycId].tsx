@@ -51,6 +51,8 @@ const Kyc = () => {
 	useEffect(() => {
 		if (a_isSuccess) {
 			toast.success('KYC approved successfully');
+			handleClose();
+			router.push('/kyc');
 		}
 
 		if (a_isError) {
