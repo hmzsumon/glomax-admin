@@ -18,6 +18,7 @@ const UsersCard = ({ company }: any) => {
 		total_ai_balance,
 		total_main_balance,
 		total_trade_volume,
+		total_e_balance,
 	} = balanceInfo || {};
 	const { users } = company || {};
 
@@ -35,21 +36,28 @@ const UsersCard = ({ company }: any) => {
 		<div className=''>
 			<Card bg='primary' text='white' className='mb-4'>
 				{isLoading ? (
-					<h4 className=' text-center'>Loading...</h4>
+					<h4 className='text-center '>Loading...</h4>
 				) : (
 					<Card.Body className='pb-0 d-flex justify-content-between align-items-start'>
 						<div>
 							<div>
 								<h5>User Info</h5>
-								<div className='d-flex gap-3'>
+								<div className='gap-3 d-flex'>
 									<p>Total Users: {users?.total_users}</p>
 									<p>New Users: {users?.new_users}</p>
 									<p>Active Users: {users?.total_active_users}</p>
 								</div>
 							</div>
+
+							<div>
+								<h5>User Earn Balance</h5>
+								<div className='gap-3 d-flex'>
+									<p>Total Earn Balance: {total_e_balance}</p>
+								</div>
+							</div>
 							<div>
 								<h5>User Balance Info</h5>
-								<div className='d-flex gap-3'>
+								<div className='gap-3 d-flex'>
 									<p>
 										Main Balance:{' '}
 										{Number(total_main_balance).toLocaleString('en-US', {
@@ -82,7 +90,7 @@ const UsersCard = ({ company }: any) => {
 							</div>
 							<div>
 								<h5>Deposit & Withdraw info</h5>
-								<div className='d-flex gap-3'>
+								<div className='gap-3 d-flex'>
 									<p>
 										Total Deposit:{' '}
 										{Number(

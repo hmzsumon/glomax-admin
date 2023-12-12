@@ -23,6 +23,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowUpRightFromSquare } from '@fortawesome/free-solid-svg-icons';
 import Select from 'react-select';
 import Spinner from 'react-bootstrap/Spinner';
+import { formatDate } from '@/lib/functions';
 
 interface RejectionReason {
 	value: string;
@@ -204,6 +205,13 @@ const Kyc = () => {
 											hour: 'numeric',
 											minute: 'numeric',
 										})}
+									</span>
+								</ListGroup.Item>
+
+								<ListGroup.Item>
+									<span>Date of Birth</span>
+									<span className='float-end '>
+										{formatDate(kyc?.date_of_birth)}
 									</span>
 								</ListGroup.Item>
 								{/*Start NID1 */}
